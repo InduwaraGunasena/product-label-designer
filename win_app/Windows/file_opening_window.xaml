@@ -12,21 +12,21 @@
     <Grid Background="#EBEBEB">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" MinHeight="220"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="350"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!-- Right Section: Image -->
             <StackPanel Grid.Column="1" HorizontalAlignment="Right" 
                         VerticalAlignment="Center" Margin="0 15 30 0">
-                <Image Source="/Assets/images/design-label.png" Width="50" Height="50" />
+                <Image x:Name="HeaderImage" Source="/Assets/images/design-label.png" Width="50" Height="50" />
             </StackPanel>
 
             <!-- Left Section: Title and Description -->
@@ -36,12 +36,15 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Select the file" 
+                <TextBlock x:Name="TitleText" Grid.Row="0" 
+                           Text="Select the file" 
                            FontWeight="Bold" FontSize="12" 
-                           VerticalAlignment="Bottom" Margin="40 0 0 0" Height="16"/>
+                           VerticalAlignment="Bottom" Margin="40 5 0 0" Height="16"/>
 
-                <TextBlock Grid.Row="1" Text="Select your file and then click 'Next' button." 
-                           FontSize="12" VerticalAlignment="Top" Margin="80 5 0 0" Height="16"/>
+                <TextBlock x:Name="DescriptionText" Grid.Row="1" 
+                           Text="Select a label design file and then click 'Next' button to edit your design file." 
+                           FontSize="10" VerticalAlignment="Top" Margin="80 5 0 0" 
+                           Height="Auto" TextWrapping="Wrap"/>
 
             </Grid>
         </Grid>
@@ -52,23 +55,24 @@
                     HorizontalAlignment="Center" Width="420"
                     x:Name="BrowsePanel" Margin="0 30 0 0">
             
-            <!-- Small descreption text -->
-            <TextBlock FontSize="12" VerticalAlignment="Top" 
+            <!-- File selecting description text -->
+            <TextBlock x:Name="FileSelectDescription" FontSize="11" VerticalAlignment="Top" 
                        Text="Choose your label design file here." 
                        Margin="0 0 0 10" Height="16"/>
 
 
-            <!-- file input box & Browse button -->
+            <!-- File input box & Browse button -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350"/>
                     <ColumnDefinition Width="70" />
                 </Grid.ColumnDefinitions>
 
+                <!-- Textbox -->
                 <TextBox x:Name="FilePath" Grid.Column="0" 
                          VerticalAlignment="Center" HorizontalAlignment="Left"
                          Height="25" Width="340"
-                         Text="Select a file" IsReadOnly="True"/>
+                         Text="Select a file" VerticalContentAlignment="Center" FontSize="11" IsReadOnly="True"/>
 
                 <Button x:Name="BrowseButton" Grid.Column="1" Content="Browse"
                         VerticalAlignment="Center" HorizontalAlignment="Right"

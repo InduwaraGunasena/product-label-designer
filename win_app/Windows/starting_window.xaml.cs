@@ -62,14 +62,18 @@ namespace win_app.Windows
             // Check if "Open a label design" or "Auto generate a label" is selected
             if (selectedButton.Title == "Open a label design" || selectedButton.Title == "Auto generate a label")
             {
-                file_opening_window fileWindow = new file_opening_window();
-                fileWindow.Show(); // Open the new window
-                this.Close(); // Close the current window
+                string selectedOption = selectedButton.Title;
+
+                // Open the file_opening_window with the selected option
+                file_opening_window fileWindow = new file_opening_window(selectedOption);
+                fileWindow.Show();
+                this.Close();
             }
             else
             {
                 MessageBox.Show($"You selected: {selectedButton.Title}");
             }
         }
+
     }
 }

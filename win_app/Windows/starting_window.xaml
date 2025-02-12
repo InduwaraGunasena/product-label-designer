@@ -20,7 +20,7 @@
            VerticalAlignment="Bottom" Margin="40 0 0 0" Height="16"/>
 
         <TextBlock Grid.Row="1" Text="Select the option you want and click 'Next' button." 
-           FontSize="12" VerticalAlignment="Top" Margin="80 5 0 0" Height="16"/>
+           FontSize="10" VerticalAlignment="Top" Margin="80 5 0 0" Height="16"/>
 
         <!-- StackPanel to arrange selection options vertically -->
         <StackPanel Grid.Row="2" VerticalAlignment="Center"
