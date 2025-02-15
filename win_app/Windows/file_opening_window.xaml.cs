@@ -91,5 +91,16 @@ namespace win_app.Windows
             // Close current window
             this.Close();
         }
+
+        // Add NextButton_Click event handler here. open the MainWindow.xaml window with the selected file path
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the main_editing_window with the selected file path if has
+            main_editing_window mainEditingWindow = new main_editing_window();
+            mainEditingWindow.Show();
+            // Close current window
+            this.Close();
+        }
+
     }
 }

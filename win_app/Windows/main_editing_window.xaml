@@ -1,0 +1,146 @@
+﻿<fluent:RibbonWindow x:Class="win_app.Windows.main_editing_window"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:local="clr-namespace:win_app.Windows"
+                     mc:Ignorable="d"
+                     xmlns:fluent="urn:fluent-ribbon"
+                     Title="Label Designer" Height="450" Width="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <fluent:Ribbon Grid.Row="0">
+            <!--Backstage-->
+            <fluent:Ribbon.Menu>
+                <fluent:Backstage>
+                </fluent:Backstage>
+            </fluent:Ribbon.Menu>
+
+            <!--Home Tab-->
+            <fluent:RibbonTabItem Header="Home">
+                <!--Clipboard-->
+                <fluent:RibbonGroupBox Header="Clipboard">
+                    <fluent:Button Header="Green"
+                                Icon="/Assets/icons/design-label.png"
+                                LargeIcon="/Assets/icons/design-label.png" Click="Button_Click" />
+                    <fluent:Button Header="Grey" 
+                                Icon="/Assets/icons/design-label.png"
+                                LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+
+                <!--Font-->
+                <fluent:RibbonGroupBox Header="Font">
+                    <fluent:Button Header="Green"
+                Icon="/Assets/icons/design-label.png"
+                LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                Icon="/Assets/icons/design-label.png"
+                LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+
+                <!--Action-->
+                <fluent:RibbonGroupBox Header="Action">
+                    <fluent:Button Header="Green"
+                Icon="/Assets/icons/design-label.png"
+                LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                Icon="/Assets/icons/design-label.png"
+                LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+
+                <!--Management-->
+                <fluent:RibbonGroupBox Header="Management">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+
+                <!--Align-->
+                <fluent:RibbonGroupBox Header="Align">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+
+                <!--Object-->
+                <fluent:RibbonGroupBox Header="Object">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                                        <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+            
+            
+            </fluent:RibbonTabItem>
+
+         
+            <!--View Tab-->
+            <fluent:RibbonTabItem Header="View">
+                <fluent:RibbonGroupBox Header="Group">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+
+            <!--Help Tab-->
+            <fluent:RibbonTabItem Header="Help">
+                <fluent:RibbonGroupBox Header="Group">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+
+
+            <!--Design Tab-->
+            <fluent:RibbonTabItem Header="Design">
+                <fluent:RibbonGroupBox Header="Group">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+
+
+            <!--Text Tab-->
+            <fluent:RibbonTabItem Header="Text">
+                <fluent:RibbonGroupBox Header="Group">
+                    <fluent:Button Header="Green"
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Grey" 
+                    Icon="/Assets/icons/design-label.png"
+                    LargeIcon="/Assets/icons/design-label.png" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+        </fluent:Ribbon>
+
+        <Grid Grid.Row="1">
+            <TextBlock>My first window containing a Ribbon and something else.</TextBlock>
+        </Grid>
+    </Grid>
+
+</fluent:RibbonWindow>

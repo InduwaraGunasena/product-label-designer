@@ -17,16 +17,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fluent.Ribbon" Version="10.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\images\auto-generate.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\images\create-label.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\images\design-label.png">
+    <Resource Include="Assets\icons\design-label.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\images\invert-selection.png">
+    <Resource Include="Assets\icons\invert-selection.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\images\open-label.png">

@@ -19,7 +19,7 @@
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="400"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -99,7 +99,7 @@
 
             <Button x:Name="NextButton" Grid.Column="1" Content="Next" IsEnabled="False"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
-                Height="25" Width="70"
+                Height="25" Width="70" Click="NextButton_Click"
                 />
 
         </Grid>
