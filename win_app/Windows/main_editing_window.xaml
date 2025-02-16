@@ -6,18 +6,29 @@
                      xmlns:local="clr-namespace:win_app.Windows"
                      mc:Ignorable="d"
                      xmlns:fluent="urn:fluent-ribbon"
-                     Title="Label Designer" Height="450" Width="800">
+                     Title="Label Designer" Height="600" Width="800"
+                     WindowState="Maximized"
+                     TitleBackground="#0078D7"
+                     TitleForeground="White"
+                     SizeChanged="Window_SizeChanged">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
+
         <fluent:Ribbon Grid.Row="0">
-            <!--Backstage-->
+            <!--Backstage(File Tab)-->
             <fluent:Ribbon.Menu>
                 <fluent:Backstage>
+                    <fluent:BackstageTabControl>
+                        <fluent:BackstageTabItem Header="New" />
+                        <fluent:BackstageTabItem Header="Print" />
+                        <fluent:Button Header="Blue" />
+                    </fluent:BackstageTabControl>
                 </fluent:Backstage>
             </fluent:Ribbon.Menu>
 
@@ -25,12 +36,29 @@
             <fluent:RibbonTabItem Header="Home">
                 <!--Clipboard-->
                 <fluent:RibbonGroupBox Header="Clipboard">
-                    <fluent:Button Header="Green"
-                                Icon="/Assets/icons/design-label.png"
-                                LargeIcon="/Assets/icons/design-label.png" Click="Button_Click" />
-                    <fluent:Button Header="Grey" 
-                                Icon="/Assets/icons/design-label.png"
-                                LargeIcon="/Assets/icons/design-label.png" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <fluent:Button Header="Paste" Grid.Column="0" Size="Large" Margin="10 0 0 0"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                       LargeIcon="/Assets/icons/icons8-paste-100.png"/>
+
+
+                        <StackPanel Grid.Column="1" Orientation="Vertical"  Margin="10 0 10 0">
+
+                            <fluent:Button Size="Middle" Header="Cut"
+                                MediumIcon="/Assets/icons/icons8-cut-48.png" />
+                            <fluent:Button Size="Middle" Header="Copy" 
+                                MediumIcon="/Assets/icons/icons8-copy-48.png"/>
+                            <fluent:Button Size="Middle" Header="Delete" 
+                                MediumIcon="/Assets/icons/icons8-trash-can-48.png"/>
+
+                        </StackPanel>
+
+                    </Grid>
                 </fluent:RibbonGroupBox>
 
                 <!--Font-->
@@ -45,48 +73,65 @@
 
                 <!--Action-->
                 <fluent:RibbonGroupBox Header="Action">
-                    <fluent:Button Header="Green"
-                Icon="/Assets/icons/design-label.png"
-                LargeIcon="/Assets/icons/design-label.png" />
-                    <fluent:Button Header="Grey" 
-                Icon="/Assets/icons/design-label.png"
-                LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Print" Size="Large" Margin="20 0 20 0"
+                LargeIcon="/Assets/icons/icons8-print-100.png" />
                 </fluent:RibbonGroupBox>
 
                 <!--Management-->
                 <fluent:RibbonGroupBox Header="Management">
-                    <fluent:Button Header="Green"
-                    Icon="/Assets/icons/design-label.png"
-                    LargeIcon="/Assets/icons/design-label.png" />
-                    <fluent:Button Header="Grey" 
-                    Icon="/Assets/icons/design-label.png"
-                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Document Properties" Size="Large"
+                     Margin="20 0 20 0" 
+                                   LargeIcon="/Assets/icons/icons8-project-setup-100.png" />
                 </fluent:RibbonGroupBox>
 
                 <!--Align-->
                 <fluent:RibbonGroupBox Header="Align">
-                    <fluent:Button Header="Green"
-                    Icon="/Assets/icons/design-label.png"
-                    LargeIcon="/Assets/icons/design-label.png" />
-                    <fluent:Button Header="Grey" 
-                    Icon="/Assets/icons/design-label.png"
-                    LargeIcon="/Assets/icons/design-label.png" />
+                    <Grid Margin="10 0 10 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-left-48.png"/>
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-bottom-48.png" Click="Button_Click_1"/>
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-right-48.png"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-top-48.png"/>
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-bottom-48.png"/>
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-bottom-48.png"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-bottom-48.png"/>
+                            <fluent:Button Size="Small"
+                                Icon="/Assets/icons/icons8-align-bottom-48.png"/>
+                        </StackPanel>
+                    </Grid>
                 </fluent:RibbonGroupBox>
 
                 <!--Object-->
                 <fluent:RibbonGroupBox Header="Object">
-                    <fluent:Button Header="Green"
-                    Icon="/Assets/icons/design-label.png"
-                    LargeIcon="/Assets/icons/design-label.png" />
-                                        <fluent:Button Header="Grey" 
-                    Icon="/Assets/icons/design-label.png"
-                    LargeIcon="/Assets/icons/design-label.png" />
+                    <fluent:Button Header="Group Objects" Size="Large" Margin="10 0 10 0"
+                        LargeIcon="/Assets/icons/icons8-group-objects-100.png" />
+                    <fluent:Button Header="Arrange" Size="Large" Margin="10 0 10 0"
+                        LargeIcon="/Assets/icons/icons8-bring-to-front-100.png" />
                 </fluent:RibbonGroupBox>
-            
-            
+
+
             </fluent:RibbonTabItem>
 
-         
+
             <!--View Tab-->
             <fluent:RibbonTabItem Header="View">
                 <fluent:RibbonGroupBox Header="Group">
@@ -138,9 +183,143 @@
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
 
+
         <Grid Grid.Row="1">
-            <TextBlock>My first window containing a Ribbon and something else.</TextBlock>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaneColumn" Width="180" MinWidth="180" MaxWidth="180"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3" />
+                <ColumnDefinition Width="Auto" MinWidth="150" MaxWidth="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left side tool pane -->
+            <Border x:Name="LeftPane" Grid.Column="0" Background="#E8EAEF" Padding="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
+                    <ItemsControl ItemsSource="{Binding Tools}">
+                        <ItemsControl.ItemsPanel>
+                            <!-- Using UniformGrid to display items in two columns -->
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Height="60" Width="60" Margin="5" Background="White" BorderThickness="0.5">
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                        <Image Source="{Binding Icon}" Height="40" Width="40"/>
+                                        <TextBlock Text="{Binding Label}" FontSize="10" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+
+            <!-- Label editing area -->
+            <TabControl Grid.Column="1" x:Name="SheetTabs" TabStripPlacement="Bottom" 
+                        BorderThickness="1 1 1 0" Background="LightGray">
+
+
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Grid>
+                                        <Border x:Name="Bd"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            BorderThickness="0"
+                                            Padding="10,2">      
+                                            <ContentPresenter x:Name="ContentSite"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"
+                                                  ContentSource="Header"
+                                                  RecognizesAccessKey="True"/>
+                                        </Border>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <!-- When the tab is selected, add a border and bold text -->
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="Black"/>
+                                            <Setter TargetName="Bd" Property="BorderThickness" Value="1,0,1,1"/>
+                                            <Setter TargetName="Bd" Property="Background" Value="lightgray"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Trigger>
+                                        <!-- When the tab is not selected, remove border and set normal text -->
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
+                                            <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                                            <Setter Property="FontWeight" Value="Normal"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+
+                <!-- small space to push buttons from left side -->
+                <TabItem IsEnabled="False" />
+
+
+                <!-- Label design tab is always open by default -->
+                <TabItem x:Name="tabLabelDesign" Header="Label design" IsSelected="True" >
+                    <!-- Content for label design editing goes here -->
+                    <TextBlock Text="Label design area" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </TabItem>
+
+                    <!-- All labels tab can be disabled/enabled as needed -->
+                <TabItem x:Name="tabAllLabels" Header="All labels" IsEnabled="True">
+                    <!-- Content for showing all labels goes here -->
+                    <TextBlock Text="All labels list" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </TabItem>
+            </TabControl>
+
+            <!--Right side panel dragger-->
+            <GridSplitter Grid.Column="2" HorizontalAlignment="Stretch" 
+                          Background="Gray"/>
+
+            <!-- Right side label key, value settings pane -->
+            <Border Grid.Column="3" Background="#E7EAEE">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    
+                </Grid>
+                
+            </Border>
+
         </Grid>
+
+
+        <!--Bottom status bar-->        
+        <fluent:StatusBar Grid.Row="2">
+            <fluent:StatusBarItem Title="Left placed item"
+                        Value="150"
+                        HorizontalAlignment="Left">
+                <TextBlock Text="150 px" />
+            </fluent:StatusBarItem>
+
+            <Separator HorizontalAlignment="Left" />
+
+            <fluent:StatusBarItem Title="Second left placed item"
+                        Value="Value shown in ContextMenu"
+                        ToolTip="Your ToolTip"
+                        Content="Content shown in StatusBar"
+                        HorizontalAlignment="Left" />
+
+            <fluent:StatusBarItem Title="Item placed on the right side"
+                        HorizontalAlignment="Right"
+                        Value="Your value which is also used as content if no content is set." />
+        </fluent:StatusBar>
+
+        
     </Grid>
 
 </fluent:RibbonWindow>
