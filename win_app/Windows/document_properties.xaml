@@ -3,11 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:win_app.Elements"
+        xmlns:local="clr-namespace:win_app.Windows"
         mc:Ignorable="d"
         Title="Label Properties" Height="420" Width="520"
-        WindowStartupLocation="CenterScreen" WindowStyle="ThreeDBorderWindow" 
-        Background="#EBEBEB" ResizeMode="NoResize">
+        WindowStartupLocation="CenterScreen"
+        Background="#EBEBEB" ResizeMode="NoResize"
+        WindowStyle="ToolWindow" ShowInTaskbar="False" Topmost="True">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -199,7 +200,7 @@
 
             <Button x:Name="BackButton" Grid.Column="0" Content="Cancel"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
-                Height="25" Width="70"/>    
+                Height="25" Width="70" Click="CancelButton_Click"/>    
 
             <Button x:Name="NextButton" Grid.Column="1" Content="Accept" IsEnabled="False"
                 VerticalAlignment="Center" HorizontalAlignment="Right"

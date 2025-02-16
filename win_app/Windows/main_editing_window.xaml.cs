@@ -4,6 +4,8 @@ using System.Windows;
 using Fluent; // Import the Fluent Ribbon namespace
 using win_app.Elements;
 using static win_app.Windows.file_opening_window;
+using static win_app.Windows.document_properties;
+
 
 namespace win_app.Windows
 {
@@ -39,6 +41,21 @@ namespace win_app.Windows
                 LeftPane.Visibility = Visibility.Visible;
                 LeftPaneColumn.Width = new GridLength(1, GridUnitType.Star); // Restore the column
             }
+        }
+
+
+        private void DocumentPropertiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Dim the current window
+            this.Opacity = 0.5;
+
+            // Create and show the documentProperties window
+            var documentPropertiesWindow = new document_properties();
+            documentPropertiesWindow.Owner = this;
+            documentPropertiesWindow.ShowDialog();
+
+            // Restore the opacity of the current window
+            this.Opacity = 1.0;
         }
 
     }

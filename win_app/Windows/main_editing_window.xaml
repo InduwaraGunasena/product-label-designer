@@ -75,14 +75,15 @@
                 <!--Action-->
                 <fluent:RibbonGroupBox Header="Action">
                     <fluent:Button Header="Print" Size="Large" Margin="20 0 20 0"
-                LargeIcon="/Assets/icons/icons8-print-100.png" />
+                            LargeIcon="/Assets/icons/icons8-print-100.png" />
                 </fluent:RibbonGroupBox>
 
                 <!--Management-->
                 <fluent:RibbonGroupBox Header="Management">
                     <fluent:Button Header="Document Properties" Size="Large"
                      Margin="20 0 20 0" 
-                                   LargeIcon="/Assets/icons/icons8-project-setup-100.png" />
+                     LargeIcon="/Assets/icons/icons8-project-setup-100.png" 
+                     Click="DocumentPropertiesButton_Click"/>
                 </fluent:RibbonGroupBox>
 
                 <!--Align-->
