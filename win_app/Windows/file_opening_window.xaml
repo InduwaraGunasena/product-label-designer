@@ -26,7 +26,7 @@
             <!-- Right Section: Image -->
             <StackPanel Grid.Column="1" HorizontalAlignment="Right" 
                         VerticalAlignment="Center" Margin="0 15 30 0">
-                <Image x:Name="HeaderImage" Source="/Assets/images/design-label.png" Width="50" Height="50" />
+                <Image x:Name="HeaderImage" Source="/Assets/images/open-label.png" Width="50" Height="50" />
             </StackPanel>
 
             <!-- Left Section: Title and Description -->
@@ -82,7 +82,7 @@
 
         </StackPanel>
 
-        <!-- Next Button -->
+        <!-- Next, Back Button -->
         <Grid Grid.Row="2" VerticalAlignment="Center"
             HorizontalAlignment="Center" Width="420"
             Margin="0,0,0,0" >
@@ -99,7 +99,7 @@
 
             <Button x:Name="NextButton" Grid.Column="1" Content="Next" IsEnabled="False"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
-                Height="25" Width="70" Click="NextButton_Click"
+                Height="25" Width="70"
                 />
 
         </Grid>

@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Fluent; // Import the Fluent Ribbon namespace
 using win_app.Elements;
+using static win_app.Windows.file_opening_window;
 
 namespace win_app.Windows
 {
@@ -21,17 +12,20 @@ namespace win_app.Windows
     /// </summary>
     public partial class main_editing_window : RibbonWindow
     {
-        public main_editing_window()
+
+        private List<LabelData> _labelDataList;
+
+        public main_editing_window(List<LabelData> labelDataList)
         {
             InitializeComponent();
-            // Assuming your LeftPane is named "LeftPane" in XAML
+            _labelDataList = labelDataList;
+
+            // Open the left pane
             LeftPane.DataContext = new LeftPaneViewModel();
+
+            DataGridLabelData.ItemsSource = _labelDataList; // Bind data to UI
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -47,9 +41,5 @@ namespace win_app.Windows
             }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

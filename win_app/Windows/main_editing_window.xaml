@@ -4,6 +4,7 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:local="clr-namespace:win_app.Windows"
+                     xmlns:elements="clr-namespace:win_app.Elements"
                      mc:Ignorable="d"
                      xmlns:fluent="urn:fluent-ribbon"
                      Title="Label Designer" Height="600" Width="800"
@@ -97,7 +98,7 @@
                             <fluent:Button Size="Small"
                                 Icon="/Assets/icons/icons8-align-left-48.png"/>
                             <fluent:Button Size="Small"
-                                Icon="/Assets/icons/icons8-align-bottom-48.png" Click="Button_Click_1"/>
+                                Icon="/Assets/icons/icons8-align-bottom-48.png"/>
                             <fluent:Button Size="Small"
                                 Icon="/Assets/icons/icons8-align-right-48.png"/>
                         </StackPanel>
@@ -268,7 +269,43 @@
                 <!-- Label design tab is always open by default -->
                 <TabItem x:Name="tabLabelDesign" Header="Label design" IsSelected="True" >
                     <!-- Content for label design editing goes here -->
-                    <TextBlock Text="Label design area" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <!-- Horizontal ruler on top -->
+                            <RowDefinition Height="30" />
+                            <!-- Rest of the area -->
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <Grid.ColumnDefinitions>
+                            <!-- Vertical ruler on left -->
+                            <ColumnDefinition Width="30" />
+                            <!-- Design area -->
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Horizontal Ruler -->
+                        <elements:HorizontalRuler Grid.Row="0" Grid.Column="1" />
+
+                        <!-- Vertical Ruler -->
+                        <elements:VerticalRuler Grid.Row="1" Grid.Column="0" />
+
+                        <!-- Design Canvas -->
+                        <Grid Grid.Row="1" Grid.Column="1" Background="White">
+                            <!-- The label container, centered -->
+                            <Border x:Name="LabelContainer" BorderBrush="Black" BorderThickness="1"
+                                    Background="Transparent"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Width="{Binding LabelWidth}" Height="{Binding LabelHeight}">            
+                                <!-- Optionally, add content inside the label -->
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+
+
+
                 </TabItem>
 
                     <!-- All labels tab can be disabled/enabled as needed -->
@@ -289,8 +326,16 @@
                         <RowDefinition Height="20" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
-                    
+
+                    <Border Grid.Row="0" Background="#0078D7">
+                        <TextBlock Text="Label settings" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Grid  Grid.Row="1">
+                        <DataGrid x:Name="DataGridLabelData" 
+                              AutoGenerateColumns="True"
+                              Margin="2"/>
+                    </Grid>
                 </Grid>
                 
             </Border>

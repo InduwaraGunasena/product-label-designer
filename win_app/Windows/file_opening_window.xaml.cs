@@ -3,6 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using OfficeOpenXml;
+using System.Collections.Generic;
+using System.IO;
 
 
 namespace win_app.Windows
@@ -13,6 +16,50 @@ namespace win_app.Windows
     public partial class file_opening_window : Window
     {
         private string _selection;
+        private string _selectedFilePath;
+
+        public class LabelData
+        {
+            public Dictionary<string, string> Fields { get; set; }
+        }
+
+        public IEnumerable<LabelData> ReadExcelData(string filePath)
+        {
+
+            // Ensure EPPlus can read the license context
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                int rowCount = worksheet.Dimension.Rows;
+                int colCount = worksheet.Dimension.Columns;
+
+                // Read column headers
+                var headers = new string[colCount];
+                for (int col = 1; col <= colCount; col++)
+                {
+                    headers[col - 1] = worksheet.Cells[1, col].Text;
+                }
+
+                // Stream rows instead of loading everything into memory
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var labelData = new LabelData { Fields = new Dictionary<string, string>() };
+
+                    for (int col = 1; col <= colCount; col++)
+                    {
+                        string header = headers[col - 1];
+                        string value = worksheet.Cells[row, col].Text;
+                        labelData.Fields[header] = value;
+                    }
+
+                    yield return labelData; // Yield each row instead of storing all at once
+                }
+            }
+        }
+
+
         public file_opening_window(string selection)
         {
             InitializeComponent();
@@ -24,6 +71,7 @@ namespace win_app.Windows
 
             BackButton.Click += BackButton_Click; // Attach event handler
             BrowseButton.Click += BrowseButton_Click;
+            NextButton.Click += NextButton_Click;
         }
 
         private void UpdateUI()
@@ -76,7 +124,8 @@ namespace win_app.Windows
 
             if (openFileDialog.ShowDialog() == true)
             {
-                FilePath.Text = openFileDialog.FileName;
+                _selectedFilePath = openFileDialog.FileName;
+                FilePath.Text = _selectedFilePath;
                 NextButton.IsEnabled = true; // Enable the "Next" button once a file is selected
             }
         }
@@ -95,12 +144,19 @@ namespace win_app.Windows
         // Add NextButton_Click event handler here. open the MainWindow.xaml window with the selected file path
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
+            
+            // Read Excel data
+            List<LabelData> labelDataList = new List<LabelData>(ReadExcelData(_selectedFilePath));
+
             // Open the main_editing_window with the selected file path if has
-            main_editing_window mainEditingWindow = new main_editing_window();
+            main_editing_window mainEditingWindow = new main_editing_window(labelDataList);
             mainEditingWindow.Show();
+           
             // Close current window
             this.Close();
         }
+
+        
 
     }
 }

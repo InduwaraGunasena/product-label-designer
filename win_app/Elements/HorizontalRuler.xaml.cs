@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace win_app.Elements
+{
+    /// <summary>
+    /// Interaction logic for HorizontalRuler.xaml
+    /// </summary>
+    public partial class HorizontalRuler : UserControl
+    {
+        public HorizontalRuler()
+        {
+            InitializeComponent();
+        }
+
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+            double width = ActualWidth;
+            // Example: Draw tick marks every 10 pixels
+            for (double x = 0; x < width; x += 10)
+            {
+                double tickHeight = (x % 50 == 0) ? 15 : 7;
+                dc.DrawLine(new Pen(Brushes.Gray, 1), new Point(x, 30), new Point(x, 30 - tickHeight));
+                if (x % 50 == 0)
+                {
+                    // Optionally draw text (scale value)
+                    FormattedText text = new FormattedText(
+                        x.ToString(),
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        FlowDirection.LeftToRight,
+                        new Typeface("Segoe UI"),
+                        10,
+                        Brushes.Black,
+                        VisualTreeHelper.GetDpi(this).PixelsPerDip);
+                    dc.DrawText(text, new Point(x + 2, 5));
+                }
+            }
+        }
+
+
+
+    }
+}
