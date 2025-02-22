@@ -18,6 +18,7 @@ namespace win_app.Windows
         private List<LabelData> _labelDataList;
 
         public main_editing_window(List<LabelData> labelDataList)
+       // public main_editing_window()
         {
             InitializeComponent();
             _labelDataList = labelDataList;

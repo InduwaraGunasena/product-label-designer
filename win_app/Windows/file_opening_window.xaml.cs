@@ -150,6 +150,7 @@ namespace win_app.Windows
 
             // Open the main_editing_window with the selected file path if has
             main_editing_window mainEditingWindow = new main_editing_window(labelDataList);
+            //main_editing_window mainEditingWindow = new main_editing_window();
             mainEditingWindow.Show();
            
             // Close current window

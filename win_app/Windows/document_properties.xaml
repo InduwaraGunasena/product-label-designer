@@ -3,20 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
         xmlns:local="clr-namespace:win_app.Windows"
         mc:Ignorable="d"
         Title="Label Properties" Height="420" Width="520"
         WindowStartupLocation="CenterScreen"
         Background="#EBEBEB" ResizeMode="NoResize"
         WindowStyle="ToolWindow" ShowInTaskbar="False" Topmost="True">
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="65"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Top bar: Image & description -->
         <Grid Grid.Row="0" Background="#0078D7">
             <Grid.ColumnDefinitions>
@@ -50,14 +51,14 @@
 
             </Grid>
         </Grid>
-        
+
         <!-- Label properties -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="220"/>
             </Grid.ColumnDefinitions>
-            
+
             <!-- Left side: label dimension -->
             <Border Grid.Column="0" BorderBrush="Gray" Padding="15 10 15 0">
                 <Grid>
@@ -89,7 +90,7 @@
                               VerticalAlignment="Center" Margin="5 4 0 0"/>
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" 
-                                VerticalAlignment="Center" Margin="20 0 20 0">
+                                VerticalAlignment="Center">
                         <Button Height="50" Width="70" Margin="5" Background="White" BorderThickness="0.5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                 <Image Source="/Assets/icons/icons8-column-100.png" Height="30" Width="30"/>
@@ -104,8 +105,8 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
-                    
-                 
+
+
                     <!-- Label measurement unit dropdown -->
                     <Grid Grid.Row="2" Margin="0 5 0 0">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" 
@@ -134,14 +135,21 @@
                               VerticalAlignment="Center" Margin="5 4 0 0"/>
                     </Grid>
                     <Grid Grid.Row="4">
-                        <UniformGrid Columns="4" Rows="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Grid.Column="0" Text="Height :" FontSize="10" Margin="0,10,0,0"/>
-                            <TextBox Grid.Column="1" Width="70" Height="20" Margin="0,5,0,0" 
+                            <TextBox x:Name="LabelHeightTextBox" Grid.Column="1" Width="70" Height="20" Margin="0,5,0,0" 
                                      VerticalContentAlignment="Center"/>
                             <TextBlock Grid.Column="2" Text="Width :" FontSize="10" Margin="0,10,0,0"/>
-                            <TextBox Grid.Column="3" Width="70" Height="20" Margin="10,5,0,0" 
+                            <TextBox x:Name="LabelWidthTextBox" Grid.Column="3" Width="70" Height="20" Margin="0,5,0,0" 
                                      VerticalContentAlignment="Center"/>
-                        </UniformGrid>
+                        </Grid>
                     </Grid>
 
                     <!-- Label margins -->
@@ -163,29 +171,50 @@
                     </Grid>
 
                     <Grid Grid.Row="6">
-                        <UniformGrid Columns="4" Rows="2">
-                            <TextBlock Grid.Column="0" Text="Left :" FontSize="10" Margin="0,10,0,0"/>
-                            <TextBox Grid.Column="1" Width="70" Height="20" Margin="0,5,0,0" 
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Left :" FontSize="10" Margin="0,10,0,0"/>
+                            <TextBox x:Name="MarginLeftTextBox" Grid.Column="1" Grid.Row="0" Width="70" Height="20" Margin="0,5,0,0" 
                                      VerticalContentAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="Top :" FontSize="10" Margin="0,10,0,0"/>
-                            <TextBox Grid.Column="3" Width="70" Height="20" Margin="10,5,0,0" 
+                            <TextBlock Grid.Column="2" Grid.Row="0" Text="Top :" FontSize="10" Margin="0,10,0,0"/>
+                            <TextBox x:Name="MarginTopTextBox"  Grid.Column="3" Grid.Row="0" Width="70" Height="20" Margin="0,5,0,0" 
                                      VerticalContentAlignment="Center"/>
 
-                            <TextBlock Grid.Column="0" Text="Right :" FontSize="10" Margin="0,10,0,0"/>
-                            <TextBox Grid.Column="1" Width="70" Height="20" Margin="0,5,0,0" 
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="Right :" FontSize="10" Margin="0,10,0,0"/>
+                            <TextBox x:Name="MarginRightTextBox" Grid.Column="1" Grid.Row="1" Width="70" Height="20" Margin="0,5,0,0" 
                                      VerticalContentAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="Bottom :" FontSize="10" Margin="0,10,0,0"/>
-                            <TextBox Grid.Column="3" Width="70" Height="20" Margin="10,5,0,0" 
+                            <TextBlock Grid.Column="2" Grid.Row="1" Text="Bottom :" FontSize="10" Margin="0,10,0,0"/>
+                            <TextBox x:Name="MarginBottomTextBox" Grid.Column="3" Grid.Row="1" Width="70" Height="20" Margin="0,5,0,0" 
                                      VerticalContentAlignment="Center"/>
-                        </UniformGrid>
-                        
+                        </Grid>
+
                     </Grid>
                 </Grid>
             </Border>
 
             <!-- Right side: label preview -->
-            <Border Grid.Column="1" Background="LightGray" />
-            
+            <Border Grid.Column="1" Background="LightGray">
+                <Canvas x:Name="LabelPreviewCanvas" Background="LightGray" 
+                        Width="200" Height="260" Loaded="LabelPreviewCanvas_Loaded">
+                    <!-- The actual label preview rectangle -->
+                    <Rectangle x:Name="LabelRectangle" Fill="White" 
+                               Stroke="Black" StrokeThickness="0.5" />
+                </Canvas>
+            </Border>
+
+
         </Grid>
 
         <!-- Accept, Cancel Button -->
@@ -200,7 +229,7 @@
 
             <Button x:Name="BackButton" Grid.Column="0" Content="Cancel"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
-                Height="25" Width="70" Click="CancelButton_Click"/>    
+                Height="25" Width="70" Click="CancelButton_Click"/>
 
             <Button x:Name="NextButton" Grid.Column="1" Content="Accept" IsEnabled="False"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
