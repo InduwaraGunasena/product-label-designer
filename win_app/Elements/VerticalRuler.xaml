@@ -5,7 +5,5 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:win_app.Elements"
              Width="30">
-    
-    <Canvas x:Name="rulerCanvas" Background="Transparent" />
-    
+     
 </UserControl>

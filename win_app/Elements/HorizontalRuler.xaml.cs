@@ -28,12 +28,18 @@ namespace win_app.Elements
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
+
             double width = ActualWidth;
+            double height = ActualHeight;
+
+            // Draw white background first
+            dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, width, height));
+
             // Example: Draw tick marks every 10 pixels
             for (double x = 0; x < width; x += 10)
             {
                 double tickHeight = (x % 50 == 0) ? 15 : 7;
-                dc.DrawLine(new Pen(Brushes.Gray, 1), new Point(x, 30), new Point(x, 30 - tickHeight));
+                dc.DrawLine(new Pen(Brushes.Gray, 1), new Point(x, height), new Point(x, height - tickHeight));
                 if (x % 50 == 0)
                 {
                     // Optionally draw text (scale value)
