@@ -8,6 +8,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Diagnostics; // Required for Debug.WriteLine
+using win_app.Elements;
 
 
 namespace win_app.Windows
@@ -21,6 +22,10 @@ namespace win_app.Windows
 
         private double canvasWidth;
         private double canvasHeight;
+
+        public LabelDefinition LabelDefinition { get; private set; }
+        public event Action<LabelDefinition>? LabelAccepted;
+
 
         public document_properties()
         {
@@ -72,7 +77,10 @@ namespace win_app.Windows
 
             // Prevent divide by zero or invalid preview calculations
             if (labelWidth <= 0 || labelHeight <= 0)
+            {
+                AcceptButton.IsEnabled = false;
                 return;
+            }
 
 
             double previewWidth;
@@ -140,6 +148,9 @@ namespace win_app.Windows
                 AddMarginLine(left, pxBottom, left + previewWidth, pxBottom);
             }
             else HighlightInvalidInput(MarginBottomTextBox);
+
+            // enable the accept button
+            AcceptButton.IsEnabled = labelWidth > 0 && labelHeight > 0;
         }
 
 
@@ -187,6 +198,30 @@ namespace win_app.Windows
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            this.Close();
+        }
+
+        private void AcceptButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Validate and collect label properties
+            if (!double.TryParse(LabelWidthTextBox.Text, out double width) || width <= 0) return;
+            if (!double.TryParse(LabelHeightTextBox.Text, out double height) || height <= 0) return;
+            double.TryParse(MarginLeftTextBox.Text, out double marginLeft);
+            double.TryParse(MarginTopTextBox.Text, out double marginTop);
+            double.TryParse(MarginRightTextBox.Text, out double marginRight);
+            double.TryParse(MarginBottomTextBox.Text, out double marginBottom);
+
+            LabelDefinition = new LabelDefinition
+            {
+                Width = width,
+                Height = height,
+                MarginLeft = marginLeft,
+                MarginTop = marginTop,
+                MarginRight = marginRight,
+                MarginBottom = marginBottom
+            };
+
+            LabelAccepted?.Invoke(LabelDefinition);
             this.Close();
         }
 

@@ -253,11 +253,11 @@
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="BackButton" Grid.Column="0" Content="Cancel"
+            <Button x:Name="CancelButton" Grid.Column="0" Content="Cancel"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
                 Height="25" Width="70" Click="CancelButton_Click"/>
 
-            <Button x:Name="NextButton" Grid.Column="1" Content="Accept" IsEnabled="False"
+            <Button x:Name="AcceptButton" Grid.Column="1" Content="Accept" IsEnabled="False" Click="AcceptButton_Click"
                 VerticalAlignment="Center" HorizontalAlignment="Right"
                 Height="25" Width="70"/>
 
