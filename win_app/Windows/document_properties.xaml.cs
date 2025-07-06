@@ -37,7 +37,6 @@ namespace win_app.Windows
 
             // Initialize preview
             UpdateLabelPreview();
-
         }
 
 
@@ -56,12 +55,25 @@ namespace win_app.Windows
 
         private void UpdateLabelPreview()
         {
+            // Guard: If canvas is not rendered yet, skip update
+            if (double.IsNaN(canvasWidth) || double.IsNaN(canvasHeight) || canvasWidth == 0 || canvasHeight == 0)
+            {
+                Debug.WriteLine("Canvas size not ready. Skipping preview update.");
+                return;
+            }
+
+
             if (!double.TryParse(LabelWidthTextBox.Text, out double labelWidth))
             {
                 return; // Stop if input is invalid
             }
             
             double labelHeight = LabelHeightTextBox.Value ?? 0;
+
+            // Prevent divide by zero or invalid preview calculations
+            if (labelWidth <= 0 || labelHeight <= 0)
+                return;
+
 
             double previewWidth;
             double previewHeight;
@@ -92,67 +104,53 @@ namespace win_app.Windows
             // Reset all textbox borders before validation
             ResetTextBoxBorders();
 
-            // Left margin
-            if (!double.TryParse(MarginLeftTextBox.Text, out double marginLeft) || marginLeft < 0 || marginLeft > labelWidth)
+
+            // Reset borders
+            LabelHeightTextBox.BorderBrush = Brushes.Gray;
+            LabelWidthTextBox.BorderBrush = Brushes.Gray;
+            LabelHeightTextBox.BorderThickness = new Thickness(1);
+            LabelWidthTextBox.BorderThickness = new Thickness(1);
+
+
+            // Each margin validated and drawn separately
+            if (double.TryParse(MarginLeftTextBox.Text, out double marginLeft) && marginLeft >= 0 && marginLeft <= labelWidth)
             {
-                HighlightInvalidInput(MarginLeftTextBox);
-                return;
+                double pxLeft = left + (marginLeft / labelWidth) * previewWidth;
+                AddMarginLine(pxLeft, top, pxLeft, top + previewHeight);
             }
-            // In preview, if we input left margin=10, we need to get the real proportion for the left margin by considering the preview length of the label
-            double previewtLeftMargin = (marginLeft / labelWidth) * previewWidth;  
+            else HighlightInvalidInput(MarginLeftTextBox);
 
-            double leftMargin_x1 = ((canvasWidth - previewWidth) / 2) + previewtLeftMargin;
-            double leftMargin_x2 = leftMargin_x1; // same for x2 too.
-            double leftMargin_y1 = ((canvasHeight - previewHeight) / 2);
-            double leftMargin_y2 = leftMargin_y1 + previewHeight;
-            AddMarginLine(leftMargin_x1, leftMargin_y1, leftMargin_x2, leftMargin_y2); // Left margin
-
-            // Right margin
-            if (!double.TryParse(MarginRightTextBox.Text, out double marginRight) || marginRight < 0 || marginRight > labelWidth)
+            if (double.TryParse(MarginRightTextBox.Text, out double marginRight) && marginRight >= 0 && marginRight <= labelWidth)
             {
-                HighlightInvalidInput(MarginRightTextBox);
-                return;
+                double pxRight = left + previewWidth - (marginRight / labelWidth) * previewWidth;
+                AddMarginLine(pxRight, top, pxRight, top + previewHeight);
             }
-            double previewtRightMargin = (marginRight / labelWidth) * previewWidth;
+            else HighlightInvalidInput(MarginRightTextBox);
 
-            double rightMargin_x1 = ((canvasWidth - previewWidth) / 2) + previewWidth - previewtRightMargin;
-            double rightMargin_x2 = rightMargin_x1;
-            double rightMargin_y1 = (canvasHeight - previewHeight) / 2;
-            double rightMargin_y2 = rightMargin_y1 + previewHeight;
-            AddMarginLine(rightMargin_x1, rightMargin_y1, rightMargin_x2, rightMargin_y2); // Right margin
-
-            // Bottom margin
-            if (!double.TryParse(MarginBottomTextBox.Text, out double marginBottom) || marginBottom < 0 || marginBottom > labelHeight)
+            if (double.TryParse(MarginTopTextBox.Text, out double marginTop) && marginTop >= 0 && marginTop <= labelHeight)
             {
-                HighlightInvalidInput(MarginBottomTextBox);
-                return;
+                double pxTop = top + (marginTop / labelHeight) * previewHeight;
+                AddMarginLine(left, pxTop, left + previewWidth, pxTop);
             }
-            double previewtBottomMargin = (marginBottom / labelHeight) * previewHeight;
+            else HighlightInvalidInput(MarginTopTextBox);
 
-            double bottomMargin_x1 = (canvasWidth - previewWidth) / 2;
-            double bootomMargin_x2 = bottomMargin_x1 + previewWidth;
-            double bootomMargin_y1 = ((canvasHeight - previewHeight) / 2) + previewHeight - previewtBottomMargin; 
-            double bootomMargin_y2 = bootomMargin_y1;
-            AddMarginLine(bottomMargin_x1, bootomMargin_y1, bootomMargin_x2, bootomMargin_y2);
-
-            // Top margin
-            if (!double.TryParse(MarginTopTextBox.Text, out double marginTop) || marginTop < 0 || marginTop > labelHeight)
+            if (double.TryParse(MarginBottomTextBox.Text, out double marginBottom) && marginBottom >= 0 && marginBottom <= labelHeight)
             {
-                HighlightInvalidInput(MarginTopTextBox);
-                return;
+                double pxBottom = top + previewHeight - (marginBottom / labelHeight) * previewHeight;
+                AddMarginLine(left, pxBottom, left + previewWidth, pxBottom);
             }
-            double previewtTopMargin = (marginTop / labelHeight) * previewHeight;
-
-            double topMargin_x1 = (canvasWidth - previewWidth) / 2;
-            double topMargin_x2 = topMargin_x1 + previewWidth;
-            double topMargin_y1 = ((canvasHeight - previewHeight) / 2) + previewtTopMargin;
-            double topMargin_y2 = topMargin_y1;
-            AddMarginLine(topMargin_x1, topMargin_y1, topMargin_x2, topMargin_y2);
+            else HighlightInvalidInput(MarginBottomTextBox);
         }
 
 
         private void AddMarginLine(double x1, double y1, double x2, double y2)
         {
+            if (double.IsNaN(x1) || double.IsNaN(x2) || double.IsNaN(y1) || double.IsNaN(y2))
+            {
+                Debug.WriteLine("Skipping AddMarginLine due to NaN values.");
+                return;
+            }
+
             Line line = new Line
             {
                 X1 = x1,
