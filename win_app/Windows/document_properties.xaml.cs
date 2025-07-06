@@ -28,12 +28,12 @@ namespace win_app.Windows
             this.Deactivated += OnWindowDeactivated; // Detect when user clicks outside
 
             // Attach event handlers
-            LabelWidthTextBox.TextChanged += (s, e) => UpdateLabelPreview();
-            LabelHeightTextBox.TextChanged += (s, e) => UpdateLabelPreview();
-            MarginLeftTextBox.TextChanged += (s, e) => UpdateLabelPreview();
-            MarginTopTextBox.TextChanged += (s, e) => UpdateLabelPreview();
-            MarginRightTextBox.TextChanged += (s, e) => UpdateLabelPreview();
-            MarginBottomTextBox.TextChanged += (s, e) => UpdateLabelPreview();
+            LabelWidthTextBox.ValueChanged += (s, e) => UpdateLabelPreview();
+            LabelHeightTextBox.ValueChanged += (s, e) => UpdateLabelPreview();
+            MarginLeftTextBox.ValueChanged += (s, e) => UpdateLabelPreview();
+            MarginTopTextBox.ValueChanged += (s, e) => UpdateLabelPreview();
+            MarginRightTextBox.ValueChanged += (s, e) => UpdateLabelPreview();
+            MarginBottomTextBox.ValueChanged += (s, e) => UpdateLabelPreview();
 
             // Initialize preview
             UpdateLabelPreview();
@@ -56,13 +56,13 @@ namespace win_app.Windows
 
         private void UpdateLabelPreview()
         {
-            if (!double.TryParse(LabelWidthTextBox.Text, out double labelWidth) ||
-                !double.TryParse(LabelHeightTextBox.Text, out double labelHeight)
-               )
+            if (!double.TryParse(LabelWidthTextBox.Text, out double labelWidth))
             {
                 return; // Stop if input is invalid
             }
             
+            double labelHeight = LabelHeightTextBox.Value ?? 0;
+
             double previewWidth;
             double previewHeight;
 
@@ -167,10 +167,10 @@ namespace win_app.Windows
         }
 
 
-        private void HighlightInvalidInput(TextBox textBox)
+        private void HighlightInvalidInput(Control control)
         {
-            textBox.BorderBrush = Brushes.Red;
-            textBox.BorderThickness = new Thickness(2);
+            control.BorderBrush = Brushes.Red;
+            control.BorderThickness = new Thickness(2);
         }
 
         private void ResetTextBoxBorders()

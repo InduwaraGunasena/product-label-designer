@@ -52,6 +52,7 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.6.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="Fluent.Ribbon" Version="10.0.4" />
   </ItemGroup>
 
