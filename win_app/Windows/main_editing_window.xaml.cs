@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using win_app.Elements;
 using Xceed.Wpf.Toolkit;
 using static win_app.Windows.document_properties;
@@ -19,10 +20,8 @@ namespace win_app.Windows
     {
 
         private List<LabelData> _labelDataList;
+        DispatcherTimer resizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40) };
 
-        private double currentZoom = 1.0;
-        // Ensure that the CanvasScrollViewer is defined in the code-behind file.
-        // Add the following field declaration if it is missing:
 
         public main_editing_window(List<LabelData> labelDataList)
         // public main_editing_window()
@@ -34,6 +33,18 @@ namespace win_app.Windows
             LeftPane.DataContext = new LeftPaneViewModel();
 
             DataGridLabelData.ItemsSource = _labelDataList; // Bind data to UI
+
+            resizeTimer.Tick += (s, e) =>
+            {
+                resizeTimer.Stop();
+                UpdateCanvasSizeAndRecenter();
+            };
+
+            ZoomboxControl.LayoutUpdated += (s, e) =>
+            {
+                if (!resizeTimer.IsEnabled)
+                    resizeTimer.Start();
+            };
         }
 
 
@@ -49,6 +60,9 @@ namespace win_app.Windows
                 LeftPane.Visibility = Visibility.Visible;
                 LeftPaneColumn.Width = new GridLength(1, GridUnitType.Star); // Restore the column
             }
+
+            UpdateCanvasSizeAndRecenter();
+
         }
 
 
@@ -123,6 +137,10 @@ namespace win_app.Windows
             Canvas.SetLeft(rect, left);
             Canvas.SetTop(rect, top);
             DesignCanvas.Children.Add(rect);
+
+
+            // Update canvas size and center
+            UpdateCanvasSizeAndRecenter();
         }
 
 
@@ -145,6 +163,41 @@ namespace win_app.Windows
         {
             ZoomSlider.Value = Math.Min(ZoomSlider.Maximum, ZoomSlider.Value + 10);
         }
+
+        private void UpdateCanvasSizeAndRecenter()
+        {
+            // Measure visible area for canvas
+            var tabContentArea = ZoomboxControl;
+            double visibleWidth = tabContentArea.ActualWidth;
+            double visibleHeight = tabContentArea.ActualHeight;
+
+            // Set canvas size to be a bit larger (to allow scroll space)
+            double canvasWidth = visibleWidth * 1.2;
+            double canvasHeight = visibleHeight * 1.2;
+
+            DesignCanvas.Width = canvasWidth;
+            DesignCanvas.Height = canvasHeight;
+
+            // Recenter the label (if it exists)
+            foreach (UIElement child in DesignCanvas.Children)
+            {
+                if (child is Rectangle labelRect)
+                {
+                    double labelWidth = labelRect.Width;
+                    double labelHeight = labelRect.Height;
+
+                    Canvas.SetLeft(labelRect, (canvasWidth - labelWidth) / 2);
+                    Canvas.SetTop(labelRect, (canvasHeight - labelHeight) / 2);
+                }
+            }
+        }
+
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+            UpdateCanvasSizeAndRecenter(); // initial layout complete
+        }
+
 
     }
 }
