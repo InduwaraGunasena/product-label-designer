@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Fluent; // Import the Fluent Ribbon namespace
+using System;
 using System.Collections.Generic;
 using System.Windows;
-using Fluent; // Import the Fluent Ribbon namespace
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using win_app.Elements;
-using static win_app.Windows.file_opening_window;
+using Xceed.Wpf.Toolkit;
 using static win_app.Windows.document_properties;
-
+using static win_app.Windows.file_opening_window;
 
 namespace win_app.Windows
 {
@@ -17,8 +20,12 @@ namespace win_app.Windows
 
         private List<LabelData> _labelDataList;
 
+        private double currentZoom = 1.0;
+        // Ensure that the CanvasScrollViewer is defined in the code-behind file.
+        // Add the following field declaration if it is missing:
+
         public main_editing_window(List<LabelData> labelDataList)
-       // public main_editing_window()
+        // public main_editing_window()
         {
             InitializeComponent();
             _labelDataList = labelDataList;
@@ -47,16 +54,96 @@ namespace win_app.Windows
 
         private void DocumentPropertiesButton_Click(object sender, RoutedEventArgs e)
         {
-            // Dim the current window
             this.Opacity = 0.5;
-
-            // Create and show the documentProperties window
             var documentPropertiesWindow = new document_properties();
             documentPropertiesWindow.Owner = this;
-            documentPropertiesWindow.ShowDialog();
 
-            // Restore the opacity of the current window
+            documentPropertiesWindow.LabelAccepted += def =>
+            {
+                ZoomSlider.Value = 100; // Set zoom to 100%
+                AddLabelToCanvas(def);
+
+                // Center the content after the layout is updated
+                Dispatcher.InvokeAsync(() =>
+                {
+                    ZoomboxControl.ZoomTo(1.0);   // Ensure zoom is consistent with slider
+                    ZoomboxControl.CenterContent(); // <--- THIS centers it!
+                });
+            };
+
+
+            documentPropertiesWindow.ShowDialog();
             this.Opacity = 1.0;
+        }
+
+        private void AddLabelToCanvas(LabelDefinition def)
+        {
+            var scrollViewer = CanvasScrollViewer;
+
+            // Get visible size
+            double visibleWidth = scrollViewer.ViewportWidth;
+            double visibleHeight = scrollViewer.ViewportHeight;
+
+            // Set canvas size slightly larger than viewport to allow panning/zooming
+            double canvasWidth = Math.Max(visibleWidth * 1.2, def.Width);
+            double canvasHeight = Math.Max(visibleHeight * 1.2, def.Height);
+            DesignCanvas.Width = canvasWidth;
+            DesignCanvas.Height = canvasHeight;
+
+            // Calculate label scale factor to fit 80% of visible area
+            double scaleX = (visibleWidth * 0.8) / def.Width;
+            double scaleY = (visibleHeight * 0.8) / def.Height;
+            double scale = Math.Min(scaleX, scaleY); // Keep aspect ratio
+
+            double labelWidth = def.Width * scale;
+            double labelHeight = def.Height * scale;
+
+            // Center label in canvas
+            double left = (canvasWidth - labelWidth) / 2;
+            double top = (canvasHeight - labelHeight) / 2;
+
+            // Remove all elements except ZoomCenterIndicator
+            for (int i = DesignCanvas.Children.Count - 1; i >= 0; i--)
+            {
+                if (DesignCanvas.Children[i] is Canvas c && c.Name == "ZoomCenterIndicator")
+                    continue;
+                DesignCanvas.Children.RemoveAt(i);
+            }
+
+            // Create scaled label
+            var rect = new Rectangle
+            {
+                Width = labelWidth,
+                Height = labelHeight,
+                Fill = Brushes.Yellow,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+
+            Canvas.SetLeft(rect, left);
+            Canvas.SetTop(rect, top);
+            DesignCanvas.Children.Add(rect);
+        }
+
+
+        private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (ZoomPercentageText != null)
+                ZoomPercentageText.Text = $"{(int)ZoomSlider.Value}%";
+
+            // Corrected the assignment to use the Zoom method instead of treating it as a property
+            ZoomboxControl.ZoomTo(ZoomSlider.Value / 100.0);
+        }
+
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            ZoomSlider.Value = Math.Max(ZoomSlider.Minimum, ZoomSlider.Value - 10);
+        }
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            ZoomSlider.Value = Math.Min(ZoomSlider.Maximum, ZoomSlider.Value + 10);
         }
 
     }

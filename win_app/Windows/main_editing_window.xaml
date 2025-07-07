@@ -5,6 +5,7 @@
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:local="clr-namespace:win_app.Windows"
                      xmlns:elements="clr-namespace:win_app.Elements"
+                     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
                      mc:Ignorable="d"
                      xmlns:fluent="urn:fluent-ribbon"
                      Title="Label Designer" Height="600" Width="800"
@@ -17,7 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="20" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
 
 
@@ -191,7 +192,7 @@
                 <ColumnDefinition x:Name="LeftPaneColumn" Width="180" MinWidth="180" MaxWidth="180"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="3" />
-                <ColumnDefinition Width="Auto" MinWidth="150" MaxWidth="300"/>
+                <ColumnDefinition Width="Auto" MinWidth="150" MaxWidth="600"/>
             </Grid.ColumnDefinitions>
 
             <!-- Left side tool pane -->
@@ -234,7 +235,7 @@
                                             Background="Transparent"
                                             BorderBrush="Transparent"
                                             BorderThickness="0"
-                                            Padding="10,2">      
+                                            Padding="10,2">
                                             <ContentPresenter x:Name="ContentSite"
                                                   VerticalAlignment="Center"
                                                   HorizontalAlignment="Center"
@@ -278,7 +279,7 @@
                             <!-- Rest of the area -->
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        
+
                         <Grid.ColumnDefinitions>
                             <!-- Vertical ruler on left -->
                             <ColumnDefinition Width="30" />
@@ -287,29 +288,26 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Horizontal Ruler -->
-                        <elements:HorizontalRuler Grid.Row="0" Grid.Column="1" />
+                        <elements:HorizontalRuler Grid.Row="0" Grid.Column="1"/>
 
                         <!-- Vertical Ruler -->
                         <elements:VerticalRuler Grid.Row="1" Grid.Column="0" />
 
                         <!-- Design Canvas -->
-                        <Grid Grid.Row="1" Grid.Column="1" Background="White">
-                            <!-- The label container, centered -->
-                            <Border x:Name="LabelContainer" BorderBrush="Black" BorderThickness="1"
-                                    Background="Transparent"
-                                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Width="{Binding LabelWidth}" Height="{Binding LabelHeight}">            
-                                <!-- Optionally, add content inside the label -->
-                            </Border>
-                        </Grid>
+                        <xctk:Zoombox x:Name="ZoomboxControl"
+                                      Grid.Row="1"
+                                      Grid.Column="1"
+                                      ClipToBounds="True">
+                            <ScrollViewer x:Name="CanvasScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <Canvas x:Name="DesignCanvas" Background="Transparent" Width="500" Height="500"/>
+                            </ScrollViewer>
+                        </xctk:Zoombox>
+
                     </Grid>
-
-
-
 
                 </TabItem>
 
-                    <!-- All labels tab can be disabled/enabled as needed -->
+                <!-- All labels tab can be disabled/enabled as needed -->
                 <TabItem x:Name="tabAllLabels" Header="All labels" IsEnabled="True">
                     <!-- Content for showing all labels goes here -->
                     <TextBlock Text="All labels list" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -338,13 +336,13 @@
                               Margin="2"/>
                     </Grid>
                 </Grid>
-                
+
             </Border>
 
         </Grid>
 
 
-        <!--Bottom status bar-->        
+        <!--Bottom status bar-->
         <fluent:StatusBar Grid.Row="2">
             <fluent:StatusBarItem Title="Left placed item"
                         Value="150"
@@ -361,11 +359,33 @@
                         HorizontalAlignment="Left" />
 
             <fluent:StatusBarItem Title="Item placed on the right side"
-                        HorizontalAlignment="Right"
-                        Value="Your value which is also used as content if no content is set." />
+                        HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,20,0">
+                    <!-- Zoom Out Button -->
+                    <Button Content="−" Width="25" Click="ZoomOut_Click" Background="Transparent" Foreground="White" />
+
+                    <!-- Zoom Slider -->
+                    <Slider x:Name="ZoomSlider"
+                        Width="120"
+                        Minimum="10"
+                        Maximum="400"
+                        Value="100"
+                        TickFrequency="10"
+                        IsSnapToTickEnabled="True"
+                        ValueChanged="ZoomSlider_ValueChanged"
+                        Margin="5,0,5,0" />
+
+                    <!-- Zoom Percentage -->
+                    <TextBlock x:Name="ZoomPercentageText" VerticalAlignment="Center" Text="100%" />
+
+                    <!-- Zoom In Button -->
+                    <Button Content="+" Width="25" Click="ZoomIn_Click" Background="Transparent" Margin="5,0,0,0" Foreground="White" />
+                </StackPanel>
+            </fluent:StatusBarItem>
+
         </fluent:StatusBar>
 
-        
+
     </Grid>
 
 </fluent:RibbonWindow>
