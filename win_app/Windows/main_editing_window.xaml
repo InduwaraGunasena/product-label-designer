@@ -302,7 +302,8 @@
                                 <Canvas x:Name="DesignCanvas" 
                                         Background="Transparent" 
                                         HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" />
+                                        VerticalAlignment="Stretch"
+                                        Width="1400" Height="708"/>
                             </ScrollViewer>
                         </xctk:Zoombox>
 

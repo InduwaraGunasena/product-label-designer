@@ -93,7 +93,6 @@ namespace win_app.Windows
             {
                 Debug.WriteLine("LabelAccepted triggered!");
                 ZoomSlider.Value = 100; // Set zoom to 100%
-                AddLabelToCanvas(def); // draw label
 
                 // Wait until layout is rendered to get correct viewport sizes
                 Dispatcher.BeginInvoke(new Action(() =>
@@ -121,9 +120,9 @@ namespace win_app.Windows
 
             Debug.WriteLine($"Viewport: {visibleWidth} x {visibleHeight}");
 
-            // Scale so label takes 80% of visible area at 100% zoom
-            double baseScaleX = (visibleWidth * 0.8) / def.Width;
-            double baseScaleY = (visibleHeight * 0.8) / def.Height;
+            // Scale so label takes 70% of visible area at 100% zoom
+            double baseScaleX = (visibleWidth * 0.7) / def.Width;
+            double baseScaleY = (visibleHeight * 0.7) / def.Height;
             double baseScale = Math.Min(baseScaleX, baseScaleY);
 
             double scaledWidth = def.Width * baseScale * zoom;
@@ -143,8 +142,8 @@ namespace win_app.Windows
             double contentHeight = scaledHeight - marginTop - marginBottom;
 
             // Set canvas size to match the label size (plus a small buffer if desired)
-            double canvasWidth = Math.Max(visibleWidth, scaledWidth);
-            double canvasHeight = Math.Max(visibleHeight, scaledHeight);
+            double canvasWidth = visibleWidth;
+            double canvasHeight = visibleHeight;
 
             DesignCanvas.Width = canvasWidth;
             DesignCanvas.Height = canvasHeight;
