@@ -151,6 +151,7 @@ namespace win_app.Windows
 
             // enable the accept button
             AcceptButton.IsEnabled = labelWidth > 0 && labelHeight > 0;
+            Debug.WriteLine("Accept button is enabled");
         }
 
 
@@ -203,6 +204,7 @@ namespace win_app.Windows
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Accept clicked"); 
             // Validate and collect label properties
             if (!double.TryParse(LabelWidthTextBox.Text, out double width) || width <= 0) return;
             if (!double.TryParse(LabelHeightTextBox.Text, out double height) || height <= 0) return;
@@ -211,7 +213,7 @@ namespace win_app.Windows
             double.TryParse(MarginRightTextBox.Text, out double marginRight);
             double.TryParse(MarginBottomTextBox.Text, out double marginBottom);
 
-            LabelDefinition = new LabelDefinition
+            var labelDefinition = new LabelDefinition
             {
                 Width = width,
                 Height = height,
@@ -221,7 +223,9 @@ namespace win_app.Windows
                 MarginBottom = marginBottom
             };
 
-            LabelAccepted?.Invoke(LabelDefinition);
+            Debug.WriteLine("Accept clicked Finished");
+
+            LabelAccepted?.Invoke(labelDefinition);
             this.Close();
         }
 

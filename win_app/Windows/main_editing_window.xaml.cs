@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using win_app.Elements;
+using win_app.Models;
 using Xceed.Wpf.Toolkit;
+using System.Diagnostics; // Required for Debug.WriteLine
 using static win_app.Windows.document_properties;
 using static win_app.Windows.file_opening_window;
 
@@ -20,7 +23,13 @@ namespace win_app.Windows
     {
 
         private List<LabelData> _labelDataList;
-        DispatcherTimer resizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40) };
+        DispatcherTimer resizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+
+        private Canvas _innerLabelCanvas;
+        private Canvas _outerLabelCanvas;
+        private Border _innerLabelBorder;
+        private Border _outerLabelBorder;
+        private double _marginLeft, _marginTop;
 
 
         public main_editing_window(List<LabelData> labelDataList)
@@ -66,6 +75,14 @@ namespace win_app.Windows
         }
 
 
+        private void DesignTabGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_outerLabelCanvas != null)
+                UpdateCanvasSizeAndRecenter();
+        }
+
+
+
         private void DocumentPropertiesButton_Click(object sender, RoutedEventArgs e)
         {
             this.Opacity = 0.5;
@@ -74,15 +91,19 @@ namespace win_app.Windows
 
             documentPropertiesWindow.LabelAccepted += def =>
             {
+                Debug.WriteLine("LabelAccepted triggered!");
                 ZoomSlider.Value = 100; // Set zoom to 100%
-                AddLabelToCanvas(def);
+                AddLabelToCanvas(def); // draw label
 
-                // Center the content after the layout is updated
-                Dispatcher.InvokeAsync(() =>
+                // Wait until layout is rendered to get correct viewport sizes
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    ZoomboxControl.ZoomTo(1.0);   // Ensure zoom is consistent with slider
-                    ZoomboxControl.CenterContent(); // <--- THIS centers it!
-                });
+                    Debug.WriteLine("Calling AddLabelToCanvas AFTER layout render");
+                    AddLabelToCanvas(def); // draw label
+                    UpdateCanvasSizeAndRecenter();
+                    ZoomboxControl.ZoomTo(1.0);
+                    ZoomboxControl.CenterContent();
+                }), DispatcherPriority.Render); // <--- use DispatcherPriority.Render instead of Loaded
             };
 
 
@@ -92,31 +113,46 @@ namespace win_app.Windows
 
         private void AddLabelToCanvas(LabelDefinition def)
         {
-            var scrollViewer = CanvasScrollViewer;
+            double zoom = ZoomSlider.Value / 100.0;
 
-            // Get visible size
-            double visibleWidth = scrollViewer.ViewportWidth;
-            double visibleHeight = scrollViewer.ViewportHeight;
+            // Compute available area from ScrollViewer
+            double visibleWidth = CanvasScrollViewer.ViewportWidth;
+            double visibleHeight = CanvasScrollViewer.ViewportHeight;
 
-            // Set canvas size slightly larger than viewport to allow panning/zooming
-            double canvasWidth = Math.Max(visibleWidth * 1.2, def.Width);
-            double canvasHeight = Math.Max(visibleHeight * 1.2, def.Height);
+            Debug.WriteLine($"Viewport: {visibleWidth} x {visibleHeight}");
+
+            // Scale so label takes 80% of visible area at 100% zoom
+            double baseScaleX = (visibleWidth * 0.8) / def.Width;
+            double baseScaleY = (visibleHeight * 0.8) / def.Height;
+            double baseScale = Math.Min(baseScaleX, baseScaleY);
+
+            double scaledWidth = def.Width * baseScale * zoom;
+            double scaledHeight = def.Height * baseScale * zoom;
+
+            double marginLeft = def.MarginLeft * baseScale * zoom;
+            double marginTop = def.MarginTop * baseScale * zoom;
+            double marginRight = def.MarginRight * baseScale * zoom;
+            double marginBottom = def.MarginBottom * baseScale * zoom;
+
+            _marginLeft = marginLeft;
+            _marginTop = marginTop;
+
+
+            // Inner content area
+            double contentWidth = scaledWidth - marginLeft - marginRight;
+            double contentHeight = scaledHeight - marginTop - marginBottom;
+
+            // Set canvas size to match the label size (plus a small buffer if desired)
+            double canvasWidth = Math.Max(visibleWidth, scaledWidth);
+            double canvasHeight = Math.Max(visibleHeight, scaledHeight);
+
             DesignCanvas.Width = canvasWidth;
             DesignCanvas.Height = canvasHeight;
 
-            // Calculate label scale factor to fit 80% of visible area
-            double scaleX = (visibleWidth * 0.8) / def.Width;
-            double scaleY = (visibleHeight * 0.8) / def.Height;
-            double scale = Math.Min(scaleX, scaleY); // Keep aspect ratio
+            double labelLeft = (canvasWidth - scaledWidth) / 2;
+            double labelTop = (canvasHeight - scaledHeight) / 2;
 
-            double labelWidth = def.Width * scale;
-            double labelHeight = def.Height * scale;
-
-            // Center label in canvas
-            double left = (canvasWidth - labelWidth) / 2;
-            double top = (canvasHeight - labelHeight) / 2;
-
-            // Remove all elements except ZoomCenterIndicator
+            // Clear old elements except ZoomCenterIndicator
             for (int i = DesignCanvas.Children.Count - 1; i >= 0; i--)
             {
                 if (DesignCanvas.Children[i] is Canvas c && c.Name == "ZoomCenterIndicator")
@@ -124,23 +160,60 @@ namespace win_app.Windows
                 DesignCanvas.Children.RemoveAt(i);
             }
 
-            // Create scaled label
-            var rect = new Rectangle
+            // OUTER CANVAS (label area with yellow background)
+            var outerCanvas = new Canvas
             {
-                Width = labelWidth,
-                Height = labelHeight,
-                Fill = Brushes.Yellow,
-                Stroke = Brushes.Black,
-                StrokeThickness = 1
+                Width = scaledWidth,
+                Height = scaledHeight,
+                Background = Brushes.Yellow,
             };
+            Canvas.SetLeft(outerCanvas, labelLeft);
+            Canvas.SetTop(outerCanvas, labelTop);
+            DesignCanvas.Children.Add(outerCanvas);
 
-            Canvas.SetLeft(rect, left);
-            Canvas.SetTop(rect, top);
-            DesignCanvas.Children.Add(rect);
+            // BORDER for label outline
+            var outerBorder = new Border
+            {
+                Width = scaledWidth,
+                Height = scaledHeight,
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(1)
+            };
+            Canvas.SetLeft(outerBorder, labelLeft);
+            Canvas.SetTop(outerBorder, labelTop);
+            DesignCanvas.Children.Add(outerBorder);
 
+            // INNER CANVAS (content area - white background, where editing happens)
+            var innerCanvas = new Canvas
+            {
+                Width = contentWidth,
+                Height = contentHeight,
+                Background = Brushes.White
+            };
+            Canvas.SetLeft(innerCanvas, labelLeft + marginLeft);
+            Canvas.SetTop(innerCanvas, labelTop + marginTop);
+            DesignCanvas.Children.Add(innerCanvas);
 
-            // Update canvas size and center
-            UpdateCanvasSizeAndRecenter();
+            // BORDER for label inner area
+            var innerBorder = new Border
+            {
+                Width = contentWidth,
+                Height = contentHeight,
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(1)
+            };
+            Canvas.SetLeft(innerBorder, labelLeft + marginLeft);
+            Canvas.SetTop(innerBorder, labelTop + marginTop);
+            DesignCanvas.Children.Add(innerBorder);
+
+            // You can keep a reference to innerCanvas for future editing
+            innerCanvas.Name = "LabelContentArea";
+
+            // Store the inner canvas for include items(for future)
+            _innerLabelCanvas = innerCanvas;
+            _outerLabelCanvas = outerCanvas;
+            _innerLabelBorder = innerBorder;
+            _outerLabelBorder = outerBorder;
         }
 
 
@@ -166,31 +239,46 @@ namespace win_app.Windows
 
         private void UpdateCanvasSizeAndRecenter()
         {
-            // Measure visible area for canvas
-            var tabContentArea = ZoomboxControl;
-            double visibleWidth = tabContentArea.ActualWidth;
-            double visibleHeight = tabContentArea.ActualHeight;
+            if (_outerLabelCanvas == null || _innerLabelCanvas == null) return;
 
-            // Set canvas size to be a bit larger (to allow scroll space)
-            double canvasWidth = visibleWidth * 1.2;
-            double canvasHeight = visibleHeight * 1.2;
+            double canvasWidth = ZoomboxControl.ActualWidth * 1.2;
+            double canvasHeight = ZoomboxControl.ActualHeight * 1.2;
 
             DesignCanvas.Width = canvasWidth;
             DesignCanvas.Height = canvasHeight;
 
-            // Recenter the label (if it exists)
-            foreach (UIElement child in DesignCanvas.Children)
-            {
-                if (child is Rectangle labelRect)
-                {
-                    double labelWidth = labelRect.Width;
-                    double labelHeight = labelRect.Height;
+            double labelWidth = _outerLabelCanvas.Width;
+            double labelHeight = _outerLabelCanvas.Height;
 
-                    Canvas.SetLeft(labelRect, (canvasWidth - labelWidth) / 2);
-                    Canvas.SetTop(labelRect, (canvasHeight - labelHeight) / 2);
-                }
+            double labelLeft = (canvasWidth - labelWidth) / 2;
+            double labelTop = (canvasHeight - labelHeight) / 2;
+
+            // Move outer label canvas
+            Canvas.SetLeft(_outerLabelCanvas, labelLeft);
+            Canvas.SetTop(_outerLabelCanvas, labelTop);
+
+            // Move outer border
+            if (_outerLabelBorder != null)
+            {
+                Canvas.SetLeft(_outerLabelBorder, labelLeft);
+                Canvas.SetTop(_outerLabelBorder, labelTop);
+            }
+
+            // Move inner canvas
+            if (_innerLabelCanvas != null)
+            {
+                Canvas.SetLeft(_innerLabelCanvas, labelLeft + _marginLeft);
+                Canvas.SetTop(_innerLabelCanvas, labelTop + _marginTop);
+            }
+
+            // Move inner border
+            if (_innerLabelBorder != null)
+            {
+                Canvas.SetLeft(_innerLabelBorder, labelLeft + _marginLeft);
+                Canvas.SetTop(_innerLabelBorder, labelTop + _marginTop);
             }
         }
+
 
         protected override void OnContentRendered(EventArgs e)
         {
@@ -198,6 +286,38 @@ namespace win_app.Windows
             UpdateCanvasSizeAndRecenter(); // initial layout complete
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
 
+            var zoomIn = ShortcutManager.GetShortcut("ZoomIn");
+            var zoomOut = ShortcutManager.GetShortcut("ZoomOut");
+
+            if ((Keyboard.Modifiers & zoomIn.Modifiers) == zoomIn.Modifiers && e.Key == zoomIn.Key)
+            {
+                ZoomIn_Click(this, null);
+                e.Handled = true;
+            }
+            else if ((Keyboard.Modifiers & zoomOut.Modifiers) == zoomOut.Modifiers && e.Key == zoomOut.Key)
+            {
+                ZoomOut_Click(this, null);
+                e.Handled = true;
+            }
+        }
+
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnPreviewMouseWheel(e);
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (e.Delta > 0)
+                    ZoomIn_Click(this, null);
+                else if (e.Delta < 0)
+                    ZoomOut_Click(this, null);
+
+                e.Handled = true;
+            }
+        }
     }
 }

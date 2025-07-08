@@ -272,7 +272,7 @@
                 <TabItem x:Name="tabLabelDesign" Header="Label design" IsSelected="True" >
                     <!-- Content for label design editing goes here -->
 
-                    <Grid>
+                    <Grid x:Name="DesignTabGrid" SizeChanged="DesignTabGrid_SizeChanged">
                         <Grid.RowDefinitions>
                             <!-- Horizontal ruler on top -->
                             <RowDefinition Height="30" />
@@ -297,9 +297,12 @@
                         <xctk:Zoombox x:Name="ZoomboxControl"
                                       Grid.Row="1"
                                       Grid.Column="1"
-                                      ClipToBounds="True">
+                                      ClipToBounds="True" IsUsingScrollBars="True">
                             <ScrollViewer x:Name="CanvasScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                <Canvas x:Name="DesignCanvas" Background="Transparent" Width="500" Height="500"/>
+                                <Canvas x:Name="DesignCanvas" 
+                                        Background="Transparent" 
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
                             </ScrollViewer>
                         </xctk:Zoombox>
 
