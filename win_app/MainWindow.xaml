@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:win_app"
         mc:Ignorable="d"
-        Title="Label" Height="458" Width="734">
+        Title="Label Designer" Height="400" Width="750">
     <Grid/>
+    
 </Window>
