@@ -297,7 +297,8 @@
                         <xctk:Zoombox x:Name="ZoomboxControl"
                                       Grid.Row="1"
                                       Grid.Column="1"
-                                      ClipToBounds="True">
+                                      ClipToBounds="True"
+                                      IsUsingScrollBars="True">
                             <ScrollViewer x:Name="CanvasScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                 <Canvas x:Name="DesignCanvas" Background="Transparent" Width="500" Height="500"/>
                             </ScrollViewer>
