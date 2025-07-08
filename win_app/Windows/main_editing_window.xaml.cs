@@ -23,7 +23,6 @@ namespace win_app.Windows
     {
 
         private List<LabelData> _labelDataList;
-        DispatcherTimer resizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
 
         private Canvas _innerLabelCanvas;
         private Canvas _outerLabelCanvas;
@@ -31,6 +30,7 @@ namespace win_app.Windows
         private Border _outerLabelBorder;
         private double _marginLeft, _marginTop;
 
+        bool _suppressAutoCenter = false;
 
         public main_editing_window(List<LabelData> labelDataList)
         // public main_editing_window()
@@ -42,46 +42,7 @@ namespace win_app.Windows
             LeftPane.DataContext = new LeftPaneViewModel();
 
             DataGridLabelData.ItemsSource = _labelDataList; // Bind data to UI
-
-            resizeTimer.Tick += (s, e) =>
-            {
-                resizeTimer.Stop();
-                UpdateCanvasSizeAndRecenter();
-            };
-
-            ZoomboxControl.LayoutUpdated += (s, e) =>
-            {
-                if (!resizeTimer.IsEnabled)
-                    resizeTimer.Start();
-            };
         }
-
-
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.NewSize.Width < 700 || e.NewSize.Height < 300) // Adjust threshold as needed
-            {
-                LeftPane.Visibility = Visibility.Collapsed;
-                LeftPaneColumn.Width = new GridLength(0); // Collapse the entire column
-            }
-            else
-            {
-                LeftPane.Visibility = Visibility.Visible;
-                LeftPaneColumn.Width = new GridLength(1, GridUnitType.Star); // Restore the column
-            }
-
-            UpdateCanvasSizeAndRecenter();
-
-        }
-
-
-        private void DesignTabGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (_outerLabelCanvas != null)
-                UpdateCanvasSizeAndRecenter();
-        }
-
-
 
         private void DocumentPropertiesButton_Click(object sender, RoutedEventArgs e)
         {
@@ -101,7 +62,12 @@ namespace win_app.Windows
                     AddLabelToCanvas(def); // draw label
                     UpdateCanvasSizeAndRecenter();
                     ZoomboxControl.ZoomTo(1.0);
-                    ZoomboxControl.CenterContent();
+
+                    if (!_suppressAutoCenter)
+                    {
+                        ZoomboxControl.CenterContent();
+                    }
+
                 }), DispatcherPriority.Render); // <--- use DispatcherPriority.Render instead of Loaded
             };
 
@@ -115,8 +81,8 @@ namespace win_app.Windows
             double zoom = ZoomSlider.Value / 100.0;
 
             // Compute available area from ScrollViewer
-            double visibleWidth = CanvasScrollViewer.ViewportWidth;
-            double visibleHeight = CanvasScrollViewer.ViewportHeight;
+            double visibleWidth = ZoomboxControl.ActualWidth;
+            double visibleHeight = ZoomboxControl.ActualHeight;
 
             Debug.WriteLine($"Viewport: {visibleWidth} x {visibleHeight}");
 
@@ -145,18 +111,18 @@ namespace win_app.Windows
             double canvasWidth = visibleWidth;
             double canvasHeight = visibleHeight;
 
-            DesignCanvas.Width = canvasWidth;
-            DesignCanvas.Height = canvasHeight;
+            LabelHostCanvas.Width = canvasWidth;
+            LabelHostCanvas.Height = canvasHeight;
 
             double labelLeft = (canvasWidth - scaledWidth) / 2;
             double labelTop = (canvasHeight - scaledHeight) / 2;
 
             // Clear old elements except ZoomCenterIndicator
-            for (int i = DesignCanvas.Children.Count - 1; i >= 0; i--)
+            for (int i = LabelHostCanvas.Children.Count - 1; i >= 0; i--)
             {
-                if (DesignCanvas.Children[i] is Canvas c && c.Name == "ZoomCenterIndicator")
+                if (LabelHostCanvas.Children[i] is Canvas c && c.Name == "ZoomCenterIndicator")
                     continue;
-                DesignCanvas.Children.RemoveAt(i);
+                LabelHostCanvas.Children.RemoveAt(i);
             }
 
             // OUTER CANVAS (label area with yellow background)
@@ -168,7 +134,7 @@ namespace win_app.Windows
             };
             Canvas.SetLeft(outerCanvas, labelLeft);
             Canvas.SetTop(outerCanvas, labelTop);
-            DesignCanvas.Children.Add(outerCanvas);
+            LabelHostCanvas.Children.Add(outerCanvas);
 
             // BORDER for label outline
             var outerBorder = new Border
@@ -180,7 +146,7 @@ namespace win_app.Windows
             };
             Canvas.SetLeft(outerBorder, labelLeft);
             Canvas.SetTop(outerBorder, labelTop);
-            DesignCanvas.Children.Add(outerBorder);
+            LabelHostCanvas.Children.Add(outerBorder);
 
             // INNER CANVAS (content area - white background, where editing happens)
             var innerCanvas = new Canvas
@@ -191,7 +157,7 @@ namespace win_app.Windows
             };
             Canvas.SetLeft(innerCanvas, labelLeft + marginLeft);
             Canvas.SetTop(innerCanvas, labelTop + marginTop);
-            DesignCanvas.Children.Add(innerCanvas);
+            LabelHostCanvas.Children.Add(innerCanvas);
 
             // BORDER for label inner area
             var innerBorder = new Border
@@ -203,7 +169,7 @@ namespace win_app.Windows
             };
             Canvas.SetLeft(innerBorder, labelLeft + marginLeft);
             Canvas.SetTop(innerBorder, labelTop + marginTop);
-            DesignCanvas.Children.Add(innerBorder);
+            LabelHostCanvas.Children.Add(innerBorder);
 
             // You can keep a reference to innerCanvas for future editing
             innerCanvas.Name = "LabelContentArea";
@@ -238,46 +204,12 @@ namespace win_app.Windows
 
         private void UpdateCanvasSizeAndRecenter()
         {
-            if (_outerLabelCanvas == null || _innerLabelCanvas == null) return;
-
-            double canvasWidth = ZoomboxControl.ActualWidth * 1.2;
-            double canvasHeight = ZoomboxControl.ActualHeight * 1.2;
-
-            DesignCanvas.Width = canvasWidth;
-            DesignCanvas.Height = canvasHeight;
-
-            double labelWidth = _outerLabelCanvas.Width;
-            double labelHeight = _outerLabelCanvas.Height;
-
-            double labelLeft = (canvasWidth - labelWidth) / 2;
-            double labelTop = (canvasHeight - labelHeight) / 2;
-
-            // Move outer label canvas
-            Canvas.SetLeft(_outerLabelCanvas, labelLeft);
-            Canvas.SetTop(_outerLabelCanvas, labelTop);
-
-            // Move outer border
-            if (_outerLabelBorder != null)
+            if (!_suppressAutoCenter)
             {
-                Canvas.SetLeft(_outerLabelBorder, labelLeft);
-                Canvas.SetTop(_outerLabelBorder, labelTop);
+                ZoomboxControl.CenterContent();
             }
 
-            // Move inner canvas
-            if (_innerLabelCanvas != null)
-            {
-                Canvas.SetLeft(_innerLabelCanvas, labelLeft + _marginLeft);
-                Canvas.SetTop(_innerLabelCanvas, labelTop + _marginTop);
-            }
-
-            // Move inner border
-            if (_innerLabelBorder != null)
-            {
-                Canvas.SetLeft(_innerLabelBorder, labelLeft + _marginLeft);
-                Canvas.SetTop(_innerLabelBorder, labelTop + _marginTop);
-            }
         }
-
 
         protected override void OnContentRendered(EventArgs e)
         {
@@ -318,5 +250,28 @@ namespace win_app.Windows
                 e.Handled = true;
             }
         }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _suppressAutoCenter = true;
+            Dispatcher.BeginInvoke(() =>
+            {
+                _suppressAutoCenter = false;
+            }, DispatcherPriority.Render);
+        }
+
+        // Event handler for recenter button click
+        private void RecenterButton_Click(object sender, RoutedEventArgs e)
+        {
+            ZoomboxControl.CenterContent();
+        }
+
+
+        // Event handler for zoom fit button click
+        private void ZoomFitButton_Click(object sender, RoutedEventArgs e)
+        {
+            ZoomboxControl.FillToBounds();
+        }
+
     }
 }
