@@ -14,6 +14,10 @@ using Xceed.Wpf.Toolkit;
 using static win_app.Elements.HorizontalRuler;
 using static win_app.Windows.document_properties;
 using static win_app.Windows.file_opening_window;
+using HorizontalUnits = win_app.Elements.HorizontalRuler.MeasurementUnit;
+using VerticalUnits = win_app.Elements.VerticalRuler.MeasurementUnit;
+
+
 
 namespace win_app.Windows
 {
@@ -319,15 +323,17 @@ namespace win_app.Windows
             if (_outerLabelCanvas == null || ZoomboxControl == null)
                 return;
 
-            // Get the label's left & right (relative to LabelHostCanvas)
-            double labelLeft = Canvas.GetLeft(_outerLabelCanvas);
-            double labelRight = labelLeft + _outerLabelCanvas.Width;
-
             // Transform viewport (0,0) and (ActualWidth, ActualHeight) from Zoombox to LabelHostCanvas
             GeneralTransform transform = ZoomboxControl.TransformToVisual(LabelHostCanvas);
 
             Point viewportTopLeftInCanvas = transform.Transform(new Point(0, 0));
             Point viewportBottomRightInCanvas = transform.Transform(new Point(ZoomboxControl.ActualWidth, ZoomboxControl.ActualHeight));
+
+
+            // ========== For Horizontal Ruler ==========
+            // Get the label's left & right (relative to LabelHostCanvas)
+            double labelLeft = Canvas.GetLeft(_outerLabelCanvas);
+            double labelRight = labelLeft + _outerLabelCanvas.Width;
 
             //Debug.WriteLine("====== Coordinate Info ======");
             //Debug.WriteLine($"Label Left (Canvas): {labelLeft}");
@@ -342,11 +348,38 @@ namespace win_app.Windows
             Debug.WriteLine($"Label Left Relative to Viewport: {labelLeftRelativeToViewport}");
             Debug.WriteLine($"Label Right Relative to Viewport: {labelRightRelativeToViewport}");
 
+
             HorizontalRuler.LabelLeft = labelLeftRelativeToViewport;
             HorizontalRuler.LabelRight = labelRightRelativeToViewport;
             HorizontalRuler.ZoomLevel = ZoomSlider.Value / 100.0;
             HorizontalRuler.UnitSize = 96.0 / 25.4; // 1 mm = 96 DPI / 25.4
-            HorizontalRuler.UnitType = MeasurementUnit.Millimeter;
+            HorizontalRuler.UnitType = HorizontalUnits.Millimeter;
+
+
+
+            // ========== For Vertical Ruler ==========
+            // Get the label's left & right (relative to LabelHostCanvas)
+            double labelTop = Canvas.GetTop(_outerLabelCanvas);
+            double labelBottom = labelTop + _outerLabelCanvas.Height;
+
+            //Debug.WriteLine("====== Coordinate Info ======");
+            //Debug.WriteLine($"Label Left (Canvas): {labelLeft}");
+            //Debug.WriteLine($"Label Right (Canvas): {labelRight}");
+            //Debug.WriteLine($"Viewport Top Left (Canvas): {viewportTopLeftInCanvas.X}");
+            //Debug.WriteLine($"Viewport Bottom Right (Canvas): {viewportBottomRightInCanvas.X}");
+
+            // Relative to viewport
+            double labelTopRelativeToViewport = labelTop - viewportTopLeftInCanvas.Y;
+            double labelBottomRelativeToViewport = labelBottom - viewportTopLeftInCanvas.Y;
+
+            Debug.WriteLine($"Label Top Relative to Viewport: {labelTopRelativeToViewport}");
+            Debug.WriteLine($"Label Bottom Relative to Viewport: {labelBottomRelativeToViewport}");
+
+            VerticalRuler.LabelTop = labelTopRelativeToViewport;
+            VerticalRuler.LabelBottom = labelBottomRelativeToViewport;
+            VerticalRuler.ZoomLevel = ZoomSlider.Value / 100.0;
+            VerticalRuler.UnitSize = 96.0 / 25.4; // 1 mm = 96 DPI / 25.4
+            VerticalRuler.UnitType = VerticalUnits.Millimeter;
 
 
         }

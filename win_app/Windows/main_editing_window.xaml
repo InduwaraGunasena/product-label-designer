@@ -290,7 +290,7 @@
                         <elements:HorizontalRuler x:Name="HorizontalRuler" Grid.Row="0" Grid.Column="1"/>
 
                         <!-- Vertical Ruler -->
-                        <elements:VerticalRuler Grid.Row="1" Grid.Column="0" />
+                        <elements:VerticalRuler x:Name="VerticalRuler" Grid.Row="1" Grid.Column="0" />
 
                         <!-- Design Canvas -->
                         <xctk:Zoombox x:Name="ZoomboxControl"
