@@ -287,16 +287,18 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Horizontal Ruler -->
-                        <elements:HorizontalRuler Grid.Row="0" Grid.Column="1"/>
+                        <elements:HorizontalRuler x:Name="HorizontalRuler" Grid.Row="0" Grid.Column="1"/>
 
                         <!-- Vertical Ruler -->
-                        <elements:VerticalRuler Grid.Row="1" Grid.Column="0" />
+                        <elements:VerticalRuler x:Name="VerticalRuler" Grid.Row="1" Grid.Column="0" />
 
                         <!-- Design Canvas -->
                         <xctk:Zoombox x:Name="ZoomboxControl"
                                       Grid.Row="1"
                                       Grid.Column="1"
-                                      ClipToBounds="True" IsUsingScrollBars="True">
+                                      ClipToBounds="True" 
+                                      IsUsingScrollBars="True"
+                                      KeepContentInBounds="True">
                             <Canvas x:Name="LabelHostCanvas"
                                     Background="Transparent"/>
                         </xctk:Zoombox>
@@ -388,7 +390,7 @@
                     <!-- Zoom Slider -->
                     <Slider x:Name="ZoomSlider"
                         Width="120"
-                        Minimum="10"
+                        Minimum="40"
                         Maximum="400"
                         Value="100"
                         TickFrequency="10"

@@ -1,6 +1,7 @@
 ﻿using Fluent; // Import the Fluent Ribbon namespace
 using System;
 using System.Collections.Generic;
+using System.Diagnostics; // Required for Debug.WriteLine
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,9 +11,13 @@ using System.Windows.Threading;
 using win_app.Elements;
 using win_app.Models;
 using Xceed.Wpf.Toolkit;
-using System.Diagnostics; // Required for Debug.WriteLine
+using static win_app.Elements.HorizontalRuler;
 using static win_app.Windows.document_properties;
 using static win_app.Windows.file_opening_window;
+using HorizontalUnits = win_app.Elements.HorizontalRuler.MeasurementUnit;
+using VerticalUnits = win_app.Elements.VerticalRuler.MeasurementUnit;
+
+
 
 namespace win_app.Windows
 {
@@ -32,17 +37,45 @@ namespace win_app.Windows
 
         bool _suppressAutoCenter = false;
 
+        private readonly DispatcherTimer _rulerUpdateTimer = new DispatcherTimer();
+
+
         public main_editing_window(List<LabelData> labelDataList)
         // public main_editing_window()
         {
             InitializeComponent();
             _labelDataList = labelDataList;
 
+           
+            // Setup timer interval and event
+            _rulerUpdateTimer.Interval = TimeSpan.FromMilliseconds(150);
+            _rulerUpdateTimer.Tick += (s, args) =>
+            {
+                _rulerUpdateTimer.Stop();
+                PrintLabelAndViewportCoordinates();
+            };
+
             // Open the left pane
             LeftPane.DataContext = new LeftPaneViewModel();
 
             DataGridLabelData.ItemsSource = _labelDataList; // Bind data to UI
+
+            // Attach to layout update of Zoombox to detect pan
+            ZoomboxControl.LayoutUpdated += ZoomboxControl_LayoutUpdated;
         }
+
+        private void ScheduleRulerUpdate()
+        {
+            _rulerUpdateTimer.Stop();
+            _rulerUpdateTimer.Start(); // reset the timer
+        }
+
+
+        private void ZoomboxControl_LayoutUpdated(object? sender, EventArgs e)
+        {
+            ScheduleRulerUpdate();
+        }
+
 
         private void DocumentPropertiesButton_Click(object sender, RoutedEventArgs e)
         {
@@ -107,15 +140,18 @@ namespace win_app.Windows
             double contentWidth = scaledWidth - marginLeft - marginRight;
             double contentHeight = scaledHeight - marginTop - marginBottom;
 
-            // Set canvas size to match the label size (plus a small buffer if desired)
-            double canvasWidth = visibleWidth;
-            double canvasHeight = visibleHeight;
+            // Set canvas to tightly wrap the label + small padding
+            double padding = 50; // enough for rulers, outline, selection handles
+
+            double canvasWidth = scaledWidth + padding * 2;
+            double canvasHeight = scaledHeight + padding * 2;
 
             LabelHostCanvas.Width = canvasWidth;
             LabelHostCanvas.Height = canvasHeight;
 
-            double labelLeft = (canvasWidth - scaledWidth) / 2;
-            double labelTop = (canvasHeight - scaledHeight) / 2;
+            double labelLeft = padding;
+            double labelTop = padding;
+
 
             // Clear old elements except ZoomCenterIndicator
             for (int i = LabelHostCanvas.Children.Count - 1; i >= 0; i--)
@@ -179,6 +215,9 @@ namespace win_app.Windows
             _outerLabelCanvas = outerCanvas;
             _innerLabelBorder = innerBorder;
             _outerLabelBorder = outerBorder;
+
+            ScheduleRulerUpdate();
+
         }
 
 
@@ -189,6 +228,8 @@ namespace win_app.Windows
 
             // Corrected the assignment to use the Zoom method instead of treating it as a property
             ZoomboxControl.ZoomTo(ZoomSlider.Value / 100.0);
+
+            ScheduleRulerUpdate();
         }
 
 
@@ -264,14 +305,85 @@ namespace win_app.Windows
         private void RecenterButton_Click(object sender, RoutedEventArgs e)
         {
             ZoomboxControl.CenterContent();
+
+            ScheduleRulerUpdate();
         }
 
 
         // Event handler for zoom fit button click
         private void ZoomFitButton_Click(object sender, RoutedEventArgs e)
         {
-            ZoomboxControl.FillToBounds();
+            ZoomboxControl.FitToBounds();
+
+            ScheduleRulerUpdate();
         }
+
+        private void PrintLabelAndViewportCoordinates()
+        {
+            if (_outerLabelCanvas == null || ZoomboxControl == null)
+                return;
+
+            // Transform viewport (0,0) and (ActualWidth, ActualHeight) from Zoombox to LabelHostCanvas
+            GeneralTransform transform = ZoomboxControl.TransformToVisual(LabelHostCanvas);
+
+            Point viewportTopLeftInCanvas = transform.Transform(new Point(0, 0));
+            Point viewportBottomRightInCanvas = transform.Transform(new Point(ZoomboxControl.ActualWidth, ZoomboxControl.ActualHeight));
+
+
+            // ========== For Horizontal Ruler ==========
+            // Get the label's left & right (relative to LabelHostCanvas)
+            double labelLeft = Canvas.GetLeft(_outerLabelCanvas);
+            double labelRight = labelLeft + _outerLabelCanvas.Width;
+
+            //Debug.WriteLine("====== Coordinate Info ======");
+            //Debug.WriteLine($"Label Left (Canvas): {labelLeft}");
+            //Debug.WriteLine($"Label Right (Canvas): {labelRight}");
+            //Debug.WriteLine($"Viewport Top Left (Canvas): {viewportTopLeftInCanvas.X}");
+            //Debug.WriteLine($"Viewport Bottom Right (Canvas): {viewportBottomRightInCanvas.X}");
+
+            // Relative to viewport
+            double labelLeftRelativeToViewport = labelLeft - viewportTopLeftInCanvas.X;
+            double labelRightRelativeToViewport = labelRight - viewportTopLeftInCanvas.X;
+
+            Debug.WriteLine($"Label Left Relative to Viewport: {labelLeftRelativeToViewport}");
+            Debug.WriteLine($"Label Right Relative to Viewport: {labelRightRelativeToViewport}");
+
+
+            HorizontalRuler.LabelLeft = labelLeftRelativeToViewport;
+            HorizontalRuler.LabelRight = labelRightRelativeToViewport;
+            HorizontalRuler.ZoomLevel = ZoomSlider.Value / 100.0;
+            HorizontalRuler.UnitSize = 96.0 / 25.4; // 1 mm = 96 DPI / 25.4
+            HorizontalRuler.UnitType = HorizontalUnits.Millimeter;
+
+
+
+            // ========== For Vertical Ruler ==========
+            // Get the label's left & right (relative to LabelHostCanvas)
+            double labelTop = Canvas.GetTop(_outerLabelCanvas);
+            double labelBottom = labelTop + _outerLabelCanvas.Height;
+
+            //Debug.WriteLine("====== Coordinate Info ======");
+            //Debug.WriteLine($"Label Left (Canvas): {labelLeft}");
+            //Debug.WriteLine($"Label Right (Canvas): {labelRight}");
+            //Debug.WriteLine($"Viewport Top Left (Canvas): {viewportTopLeftInCanvas.X}");
+            //Debug.WriteLine($"Viewport Bottom Right (Canvas): {viewportBottomRightInCanvas.X}");
+
+            // Relative to viewport
+            double labelTopRelativeToViewport = labelTop - viewportTopLeftInCanvas.Y;
+            double labelBottomRelativeToViewport = labelBottom - viewportTopLeftInCanvas.Y;
+
+            Debug.WriteLine($"Label Top Relative to Viewport: {labelTopRelativeToViewport}");
+            Debug.WriteLine($"Label Bottom Relative to Viewport: {labelBottomRelativeToViewport}");
+
+            VerticalRuler.LabelTop = labelTopRelativeToViewport;
+            VerticalRuler.LabelBottom = labelBottomRelativeToViewport;
+            VerticalRuler.ZoomLevel = ZoomSlider.Value / 100.0;
+            VerticalRuler.UnitSize = 96.0 / 25.4; // 1 mm = 96 DPI / 25.4
+            VerticalRuler.UnitType = VerticalUnits.Millimeter;
+
+
+        }
+
 
     }
 }
