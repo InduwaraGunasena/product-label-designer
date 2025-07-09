@@ -287,7 +287,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Horizontal Ruler -->
-                        <elements:HorizontalRuler Grid.Row="0" Grid.Column="1"/>
+                        <elements:HorizontalRuler x:Name="HorizontalRuler" Grid.Row="0" Grid.Column="1"/>
 
                         <!-- Vertical Ruler -->
                         <elements:VerticalRuler Grid.Row="1" Grid.Column="0" />
@@ -390,7 +390,7 @@
                     <!-- Zoom Slider -->
                     <Slider x:Name="ZoomSlider"
                         Width="120"
-                        Minimum="30"
+                        Minimum="40"
                         Maximum="400"
                         Value="100"
                         TickFrequency="10"
