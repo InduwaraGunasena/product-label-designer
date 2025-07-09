@@ -296,7 +296,9 @@
                         <xctk:Zoombox x:Name="ZoomboxControl"
                                       Grid.Row="1"
                                       Grid.Column="1"
-                                      ClipToBounds="True" IsUsingScrollBars="True">
+                                      ClipToBounds="True" 
+                                      IsUsingScrollBars="True"
+                                      KeepContentInBounds="True">
                             <Canvas x:Name="LabelHostCanvas"
                                     Background="Transparent"/>
                         </xctk:Zoombox>
@@ -388,7 +390,7 @@
                     <!-- Zoom Slider -->
                     <Slider x:Name="ZoomSlider"
                         Width="120"
-                        Minimum="10"
+                        Minimum="30"
                         Maximum="400"
                         Value="100"
                         TickFrequency="10"

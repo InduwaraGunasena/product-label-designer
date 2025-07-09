@@ -107,15 +107,18 @@ namespace win_app.Windows
             double contentWidth = scaledWidth - marginLeft - marginRight;
             double contentHeight = scaledHeight - marginTop - marginBottom;
 
-            // Set canvas size to match the label size (plus a small buffer if desired)
-            double canvasWidth = visibleWidth;
-            double canvasHeight = visibleHeight;
+            // Set canvas to tightly wrap the label + small padding
+            double padding = 50; // enough for rulers, outline, selection handles
+
+            double canvasWidth = scaledWidth + padding * 2;
+            double canvasHeight = scaledHeight + padding * 2;
 
             LabelHostCanvas.Width = canvasWidth;
             LabelHostCanvas.Height = canvasHeight;
 
-            double labelLeft = (canvasWidth - scaledWidth) / 2;
-            double labelTop = (canvasHeight - scaledHeight) / 2;
+            double labelLeft = padding;
+            double labelTop = padding;
+
 
             // Clear old elements except ZoomCenterIndicator
             for (int i = LabelHostCanvas.Children.Count - 1; i >= 0; i--)
