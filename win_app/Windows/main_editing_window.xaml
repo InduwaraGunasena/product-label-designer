@@ -191,7 +191,7 @@
                 <ColumnDefinition x:Name="LeftPaneColumn" Width="180" MinWidth="180" MaxWidth="180"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="3" />
-                <ColumnDefinition Width="Auto" MinWidth="150" MaxWidth="600"/>
+                <ColumnDefinition Width="Auto" MinWidth="180" MaxWidth="600"/>
             </Grid.ColumnDefinitions>
 
             <!-- Left side tool pane -->
@@ -320,25 +320,10 @@
 
             <!-- Right side label key, value settings pane -->
             <Border Grid.Column="3" Background="#E7EAEE">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" Background="#0078D7">
-                        <TextBlock Text="Label settings" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Border>
-
-                    <Grid  Grid.Row="1">
-                        <DataGrid x:Name="DataGridLabelData" 
-                              AutoGenerateColumns="True"
-                              Margin="2"/>
-                    </Grid>
-                </Grid>
+                <elements:RightPaneLabelItems />
 
             </Border>
-
         </Grid>
 
 

@@ -58,8 +58,6 @@ namespace win_app.Windows
             // Open the left pane
             LeftPane.DataContext = new LeftPaneViewModel();
 
-            DataGridLabelData.ItemsSource = _labelDataList; // Bind data to UI
-
             // Attach to layout update of Zoombox to detect pan
             ZoomboxControl.LayoutUpdated += ZoomboxControl_LayoutUpdated;
         }

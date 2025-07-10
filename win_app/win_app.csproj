@@ -24,9 +24,11 @@
     <None Remove="Assets\icons\icons8-copy-48.png" />
     <None Remove="Assets\icons\icons8-cut-100.png" />
     <None Remove="Assets\icons\icons8-cut-48.png" />
+    <None Remove="Assets\icons\icons8-delete-table-48.png" />
     <None Remove="Assets\icons\icons8-group-objects-100.png" />
     <None Remove="Assets\icons\icons8-group-objects-48.png" />
     <None Remove="Assets\icons\icons8-image-100.png" />
+    <None Remove="Assets\icons\icons8-insert-table-48.png" />
     <None Remove="Assets\icons\icons8-line-100.png" />
     <None Remove="Assets\icons\icons8-oval-100.png" />
     <None Remove="Assets\icons\icons8-paste-100.png" />
@@ -100,6 +102,9 @@
     <Resource Include="Assets\icons\icons8-cut-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\icons\icons8-delete-table-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\icons\icons8-group-objects-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -107,6 +112,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-image-100.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-insert-table-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-line-100.png">
@@ -175,6 +183,10 @@
     <Resource Include="Assets\images\open-label.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\" />
   </ItemGroup>
 
 </Project>
