@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using win_app.Models;
+using Microsoft.Win32; // Needed for OpenFileDialog
 
 namespace win_app.Elements
 {
@@ -40,6 +41,10 @@ namespace win_app.Elements
         public ObservableCollection<LabelItem> FixedItems { get; set; } = new();
         public ObservableCollection<LabelItem> VariableItems { get; set; } = new();
 
+        public ObservableCollection<LabelPropertyViewModel> SelectedItemProperties { get; set; } = new();
+
+
+
         // List of types (Text, Number, etc.)
         public List<string> ItemTypes => LabelItemTypes.AllTypes;
 
@@ -66,8 +71,29 @@ namespace win_app.Elements
         // Selection change handlers
         private void FixedItemsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            IsFixedStyleVisible = FixedItemsGrid.SelectedItem != null;
+            var selected = FixedItemsGrid.SelectedItem as LabelItem;
+            IsFixedStyleVisible = selected != null;
+            LoadPropertiesForSelectedItem(selected);
         }
+
+        private void LoadPropertiesForSelectedItem(LabelItem item)
+        {
+            SelectedItemProperties.Clear();
+
+            if (item == null || string.IsNullOrEmpty(item.Type)) return;
+
+            if (LabelItemTypes.TypeProperties.TryGetValue(item.Type, out var props))
+            {
+                foreach (var prop in props)
+                {
+                    SelectedItemProperties.Add(new LabelPropertyViewModel(prop));
+                }
+            }
+
+            OnPropertyChanged(nameof(SelectedItemProperties));
+        }
+
+
 
         private void VariableItemsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -95,6 +121,31 @@ namespace win_app.Elements
         {
             if (VariableItemsGrid.SelectedItem is LabelItem selected)
                 VariableItems.Remove(selected);
+        }
+
+        private void BrowseImage_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null) return;
+
+            // Find the parent DataContext (LabelPropertyViewModel)
+            if (button.DataContext is LabelPropertyViewModel propertyViewModel)
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Filter = "Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.gif)|*.png;*.jpg;*.jpeg;*.bmp;*.gif",
+                    Title = "Select an Image File"
+                };
+
+                // Use Window.GetWindow to set the owner for dialog
+                var owner = Window.GetWindow(this);
+                bool? result = (owner != null) ? dialog.ShowDialog(owner) : dialog.ShowDialog();
+
+                if (result == true)
+                {
+                    propertyViewModel.SelectedValue = dialog.FileName;
+                }
+            }
         }
 
         // INotifyPropertyChanged implementation

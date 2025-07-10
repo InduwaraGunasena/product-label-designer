@@ -5,13 +5,92 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:win_app.Converters"
+             xmlns:sel="clr-namespace:win_app.Selectors"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="300"
              x:Name="Root">
 
     <UserControl.Resources>
+        <!-- Converters -->
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <!-- UI Templates -->
+        <!-- Dropdown input templates (input is a selection of a series of options) -->
+        <DataTemplate x:Key="InputDropdownTemplate">
+            <ComboBox HorizontalAlignment="Stretch"
+              MinWidth="100"
+              IsEditable="True"
+              ItemsSource="{Binding Options}"
+              SelectedItem="{Binding SelectedValue}" />
+        </DataTemplate>
+
+        <!-- Set of icon selection templates (input is selections of a series of icon buttons) -->
+        <DataTemplate x:Key="IconSelectionTemplate">
+            <ItemsControl ItemsSource="{Binding IconOptions}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Margin="2"
+                              Width="18"
+                              Height="18"
+                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                              >
+                            <Image Source="{Binding Icon}" Stretch="Uniform"/>
+                        </ToggleButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
+
+
+        <!-- Text input text box templates (input is a text) -->
+        <DataTemplate x:Key="TextInputTemplate">
+            <TextBox HorizontalAlignment="Stretch"
+                     MinWidth="100"/>
+        </DataTemplate>
+
+        <!-- File path text box templates (input is a file path) -->
+        <DataTemplate x:Key="FilePathTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="ImagePathTextBox"
+                 Grid.Column="0"
+                 HorizontalAlignment="Stretch"
+                 MinWidth="100"
+                 Text="{Binding SelectedValue, Mode=TwoWay}" />
+                
+                <Button Grid.Column="1"
+                        Margin="5,0,0,0"
+                        ToolTip="Browse Image"
+                        Click="BrowseImage_Click"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Padding="0"
+                        Focusable="False">
+                    <Image Source="/Assets/icons/icons8-attachment-52.png"
+                           Width="16"
+                           Height="16"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
+
+
+        <!-- Template Selector -->
+        <sel:PropertyTemplateSelector x:Key="PropertySelector"
+        InputDropdownTemplate="{StaticResource InputDropdownTemplate}"
+        IconSelectionTemplate="{StaticResource IconSelectionTemplate}"
+        TextInputTemplate="{StaticResource TextInputTemplate}"
+        FilePathTemplate="{StaticResource FilePathTemplate}" />
     </UserControl.Resources>
+
 
 
     <Grid>
@@ -55,19 +134,19 @@
 
                     <!-- DataGrid -->
                     <DataGrid x:Name="FixedItemsGrid"
-                                Grid.Row="1"
-                                ItemsSource="{Binding FixedItems}"
-                                AutoGenerateColumns="False"
-                                CanUserAddRows="False"
-                                ColumnWidth="*"
-                                HeadersVisibility="Column"
-                                SelectionChanged="FixedItemsGrid_SelectionChanged">           
+                              Grid.Row="1"
+                              ItemsSource="{Binding FixedItems}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              ColumnWidth="*"
+                              HeadersVisibility="Column"
+                              SelectionChanged="FixedItemsGrid_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                             <DataGridComboBoxColumn Header="Type"
-                                                SelectedItemBinding="{Binding Type}"
-                                                ItemsSource="{Binding ItemTypes, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                Width="*" />
+                                                    SelectedItemBinding="{Binding Type}"
+                                                    ItemsSource="{Binding ItemTypes, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -84,26 +163,44 @@
                             Background="#F0F0F0"
                             Padding="10"
                             Visibility="{Binding IsFixedStyleVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock Text="Properties" FontWeight="Bold" Margin="0 0 0 8"/>
-                            
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <StackPanel>
-                                    <TextBlock Text="(example) Font Size:"/>
-                                    <TextBox Width="100" Margin="0 0 0 10"/>
-                                    <TextBlock Text="(example) Value Format:"/>
-                                    <ComboBox Width="150">
-                                        <ComboBoxItem Content="Decimal" />
-                                        <ComboBoxItem Content="Percentage" />
-                                    </ComboBox>
-                                </StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- Title -->
+                                <RowDefinition Height="*"/>
+                                <!-- Scrollable area -->
+                            </Grid.RowDefinitions>
+
+                            <!-- Properties Title -->
+                            <TextBlock Text="Properties" Grid.Row="0" FontWeight="Bold" Margin="0 0 0 8"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                                    <ItemsControl ItemsSource="{Binding SelectedItemProperties}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0 5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0"/>
+                                                    <ContentControl Content="{Binding}"
+                                                                    Grid.Column="1"
+                                                                    ContentTemplateSelector="{StaticResource PropertySelector}"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    Margin="0"
+                                                                    MinWidth="50"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
                             </ScrollViewer>
-                            
-                        </StackPanel>
+
+                        </Grid>
                     </Border>
                 </Grid>
-
-
             </TabItem>
 
             <!-- for Variable items -->
@@ -154,29 +251,48 @@
                                   HorizontalAlignment="Stretch"
                                   Background="Gray"
                                   ShowsPreview="True"
-                                  ResizeDirection="Rows"/>  
+                                  ResizeDirection="Rows"/>
 
                     <!-- Properties -->
                     <Border Grid.Row="3"
                             Background="#F0F0F0"
                             Padding="10"
                             Visibility="{Binding IsFixedStyleVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel>
-                            <TextBlock Text="Properties" FontWeight="Bold" Margin="0 0 0 8"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- Title -->
+                                <RowDefinition Height="*"/>
+                                <!-- Scrollable area -->
+                            </Grid.RowDefinitions>
 
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <StackPanel>
-                                    <TextBlock Text="(example) Font Size:"/>
-                                    <TextBox Width="100" Margin="0 0 0 10"/>
-                                    <TextBlock Text="(example) Value Format:"/>
-                                    <ComboBox Width="150">
-                                        <ComboBoxItem Content="Decimal" />
-                                        <ComboBoxItem Content="Percentage" />
-                                    </ComboBox>
-                                </StackPanel>
+                            <!-- Properties Title -->
+                            <TextBlock Text="Properties" Grid.Row="0" FontWeight="Bold" Margin="0 0 0 8"/>
+
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                                <ItemsControl ItemsSource="{Binding SelectedItemProperties}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0 5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0"/>
+                                                    <ContentControl Content="{Binding}"
+                                                                    Grid.Column="1"
+                                                                    ContentTemplateSelector="{StaticResource PropertySelector}"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    Margin="0"
+                                                                    MinWidth="50"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                             </ScrollViewer>
 
-                        </StackPanel>
+                        </Grid>
                     </Border>
 
                 </Grid>
@@ -185,3 +301,4 @@
         </TabControl>
     </Grid>
 </UserControl>
+

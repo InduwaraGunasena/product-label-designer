@@ -191,7 +191,7 @@
                 <ColumnDefinition x:Name="LeftPaneColumn" Width="180" MinWidth="180" MaxWidth="180"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="3" />
-                <ColumnDefinition Width="Auto" MinWidth="180" MaxWidth="600"/>
+                <ColumnDefinition Width="Auto" MinWidth="260" MaxWidth="500"/>
             </Grid.ColumnDefinitions>
 
             <!-- Left side tool pane -->
@@ -374,14 +374,16 @@
 
                     <!-- Zoom Slider -->
                     <Slider x:Name="ZoomSlider"
-                        Width="120"
-                        Minimum="40"
-                        Maximum="400"
-                        Value="100"
-                        TickFrequency="10"
-                        IsSnapToTickEnabled="True"
-                        ValueChanged="ZoomSlider_ValueChanged"
-                        Margin="5,0,5,0" />
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Width="120"
+                            Minimum="40"
+                            Maximum="400"
+                            Value="100"
+                            TickFrequency="10"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="ZoomSlider_ValueChanged"
+                            Margin="5,0,5,0" />
 
                     <!-- Zoom Percentage -->
                     <TextBlock x:Name="ZoomPercentageText" VerticalAlignment="Center" Text="100%" />

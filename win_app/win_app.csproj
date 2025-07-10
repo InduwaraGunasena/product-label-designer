@@ -10,12 +10,21 @@
 
   <ItemGroup>
     <None Remove="Assets\icons\expand-svgrepo-com.png" />
+    <None Remove="Assets\icons\icons8-align-50-2.png" />
+    <None Remove="Assets\icons\icons8-align-50.png" />
     <None Remove="Assets\icons\icons8-align-bottom-48.png" />
+    <None Remove="Assets\icons\icons8-align-center-50.png" />
+    <None Remove="Assets\icons\icons8-align-justify-50.png" />
     <None Remove="Assets\icons\icons8-align-left-48.png" />
+    <None Remove="Assets\icons\icons8-align-left-50.png" />
     <None Remove="Assets\icons\icons8-align-right-48.png" />
+    <None Remove="Assets\icons\icons8-align-right-50.png" />
+    <None Remove="Assets\icons\icons8-align-text-center-50.png" />
     <None Remove="Assets\icons\icons8-align-top-100.png" />
     <None Remove="Assets\icons\icons8-align-top-48.png" />
+    <None Remove="Assets\icons\icons8-attachment-52.png" />
     <None Remove="Assets\icons\icons8-barcode-100.png" />
+    <None Remove="Assets\icons\icons8-bold-50.png" />
     <None Remove="Assets\icons\icons8-bring-to-front-100.png" />
     <None Remove="Assets\icons\icons8-bring-to-front-48.png" />
     <None Remove="Assets\icons\icons8-column-100.png" />
@@ -29,6 +38,7 @@
     <None Remove="Assets\icons\icons8-group-objects-48.png" />
     <None Remove="Assets\icons\icons8-image-100.png" />
     <None Remove="Assets\icons\icons8-insert-table-48.png" />
+    <None Remove="Assets\icons\icons8-italic-50.png" />
     <None Remove="Assets\icons\icons8-line-100.png" />
     <None Remove="Assets\icons\icons8-oval-100.png" />
     <None Remove="Assets\icons\icons8-paste-100.png" />
@@ -46,6 +56,7 @@
     <None Remove="Assets\icons\icons8-trash-48.png" />
     <None Remove="Assets\icons\icons8-trash-can-100.png" />
     <None Remove="Assets\icons\icons8-trash-can-48.png" />
+    <None Remove="Assets\icons\icons8-underline-50.png" />
     <None Remove="Assets\images\auto-generate.png" />
     <None Remove="Assets\images\create-label.png" />
     <None Remove="Assets\images\design-label.png" />
@@ -63,19 +74,46 @@
     <Resource Include="Assets\icons\expand-svgrepo-com.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\icons\icons8-align-50-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-align-50.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\icons\icons8-align-bottom-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-align-center-50.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-align-justify-50.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-align-left-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\icons\icons8-align-left-50.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\icons\icons8-align-right-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-align-right-50.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-align-text-center-50.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-align-top-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\icons\icons8-attachment-52.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\icons\icons8-barcode-100.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-bold-50.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-bring-to-front-100.png">
@@ -115,6 +153,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-insert-table-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-italic-50.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-line-100.png">
@@ -166,6 +207,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\icons\icons8-trash-can-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\icons\icons8-underline-50.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\images\auto-generate.png">
