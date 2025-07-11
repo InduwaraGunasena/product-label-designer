@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32; // Needed for OpenFileDialog
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using win_app.Models;
-using Microsoft.Win32; // Needed for OpenFileDialog
+using win_app.Services;
 
 namespace win_app.Elements
 {
@@ -186,5 +187,55 @@ namespace win_app.Elements
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+
+        // Save the current tabke items in both fixed and variable items.
+        private void SaveLabelDesign_Click(object sender, RoutedEventArgs e)
+        {
+            var design = new LabelDesign
+            {
+                FixedItems = FixedItems.ToList(),
+                VariableItems = VariableItems.ToList()
+            };
+
+            var dialog = new SaveFileDialog
+            {
+                Filter = "JSON Files (*.json)|*.json",
+                FileName = "LabelDesign.json"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                LabelDesignManager.SaveToFile(design, dialog.FileName);
+                MessageBox.Show("Design saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        // Load the fixed and variable items to the tables.
+        private void LoadLabelDesign_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "JSON Files (*.json)|*.json"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                var loaded = LabelDesignManager.LoadFromFile(dialog.FileName);
+                if (loaded != null)
+                {
+                    FixedItems.Clear();
+                    VariableItems.Clear();
+
+                    foreach (var item in loaded.FixedItems)
+                        FixedItems.Add(item);
+                    foreach (var item in loaded.VariableItems)
+                        VariableItems.Add(item);
+
+                    MessageBox.Show("Design loaded successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+        }
+
     }
 }

@@ -1,15 +1,22 @@
 ﻿using Fluent; // Import the Fluent Ribbon namespace
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics; // Required for Debug.WriteLine
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Microsoft.Win32;
+
+
 using win_app.Elements;
 using win_app.Models;
+using win_app.Services;
 using Xceed.Wpf.Toolkit;
 using static win_app.Elements.HorizontalRuler;
 using static win_app.Windows.document_properties;
@@ -39,6 +46,7 @@ namespace win_app.Windows
 
         private readonly DispatcherTimer _rulerUpdateTimer = new DispatcherTimer();
 
+        private LabelDesign _currentLabelDesign = new();
 
         public main_editing_window(List<LabelData> labelDataList)
         // public main_editing_window()
@@ -46,7 +54,7 @@ namespace win_app.Windows
             InitializeComponent();
             _labelDataList = labelDataList;
 
-           
+
             // Setup timer interval and event
             _rulerUpdateTimer.Interval = TimeSpan.FromMilliseconds(150);
             _rulerUpdateTimer.Tick += (s, args) =>
@@ -382,11 +390,92 @@ namespace win_app.Windows
 
         }
 
+
         private void RightPaneLabelItems_Loaded(object sender, RoutedEventArgs e)
         {
-            // Event handler logic
+            //var rightPane = sender as RightPaneLabelItems;
+            //if (rightPane != null)
+            //{
+            //    rightPane.FixedItems = new ObservableCollection<LabelItem>(_currentLabelDesign.FixedItems);
+            //    rightPane.VariableItems = new ObservableCollection<LabelItem>(_currentLabelDesign.VariableItems);
+            //}
+        }
+
+        private void OneDrive_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("OneDrive login popup would open here.", "Future Update", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            // Open OneDrive login popup
+            //var oneDriveWindow = new OneDriveLoginWindow(); // Your custom login window
+            //oneDriveWindow.Owner = this;
+            //oneDriveWindow.ShowDialog();
+        }
+
+        private void Dropbox_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Dropbox login popup would open here.", "Future Update", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            //var dropboxWindow = new DropboxLoginWindow();
+            //dropboxWindow.Owner = this;
+            //dropboxWindow.ShowDialog();
+        }
+
+        private void GoogleDrive_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Google Drive login popup would open here.", "Future Update", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            //var googleWindow = new GoogleDriveLoginWindow();
+            //googleWindow.Owner = this;
+            //googleWindow.ShowDialog();
+        }
+
+        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog
+            {
+                Filter = "Label Design Files (*.json)|*.json",
+                Title = "Open Label Design"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                var design = LabelDesignManager.LoadFromFile(dlg.FileName);
+                if (design != null)
+                {
+                    _currentLabelDesign = design;
+                    RightPaneLabelItems.FixedItems = new ObservableCollection<LabelItem>(design.FixedItems);
+                    RightPaneLabelItems.VariableItems = new ObservableCollection<LabelItem>(design.VariableItems);
+                    OpenFilePathText.Text = dlg.FileName;
+                }
+            }
+        }
+
+        private void SaveFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new SaveFileDialog
+            {
+                Filter = "Label Design Files (*.json)|*.json",
+                Title = "Save Label Design As"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                SyncFromRightPane();
+                LabelDesignManager.SaveToFile(_currentLabelDesign, dlg.FileName);
+                SaveFilePathText.Text = dlg.FileName;
+            }
         }
 
 
+        private void SyncFromRightPane()
+        {
+            if (RightPaneLabelItems != null && _currentLabelDesign != null)
+            {
+                _currentLabelDesign.FixedItems = new List<LabelItem>(RightPaneLabelItems.FixedItems);
+                _currentLabelDesign.VariableItems = new List<LabelItem>(RightPaneLabelItems.VariableItems);
+            }
+        }
+
     }
+
 }
