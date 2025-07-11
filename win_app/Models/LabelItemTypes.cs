@@ -10,9 +10,7 @@ namespace win_app.Models
     {
         public static List<string> AllTypes { get; } = new()
         {
-            "Text",
-            "Number",
-            "Date",
+            "Text",           
             "Barcode",
             "Image"
         };

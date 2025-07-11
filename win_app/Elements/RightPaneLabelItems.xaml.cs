@@ -94,11 +94,25 @@ namespace win_app.Elements
                 SelectedItemProperties.Add(new LabelPropertyViewModel(prop));
             }
         }
+        // create the number for getting a unique name.
+        private string GetUniqueName(string baseName, ObservableCollection<LabelItem> items)
+        {
+            int counter = 0;
+            string uniqueName;
+            do
+            {
+                uniqueName = counter == 0 ? baseName : $"{baseName} ({counter})";
+                counter++;
+            } while (items.Any(item => item.Name == uniqueName));
+            return uniqueName;
+        }
+
 
         // Add/Remove buttons
         private void AddFixedItem_Click(object sender, RoutedEventArgs e)
         {
-            FixedItems.Add(new LabelItem { Name = "NewFixedItem", Type = "Text" });
+            string name = GetUniqueName("NewFixedItem", FixedItems);
+            FixedItems.Add(new LabelItem { Name = name, Type = "Text" });
         }
 
         private void RemoveFixedItem_Click(object sender, RoutedEventArgs e)
@@ -109,7 +123,8 @@ namespace win_app.Elements
 
         private void AddVariableItem_Click(object sender, RoutedEventArgs e)
         {
-            VariableItems.Add(new LabelItem { Name = "NewVariableItem", Type = "Text" });
+            string name = GetUniqueName("NewVariableItem", VariableItems);
+            VariableItems.Add(new LabelItem { Name = name, Type = "Text" });
         }
 
         private void RemoveVariableItem_Click(object sender, RoutedEventArgs e)
