@@ -44,7 +44,6 @@ namespace win_app.Elements
         public ObservableCollection<LabelPropertyViewModel> SelectedItemProperties { get; set; } = new();
 
 
-
         // List of types (Text, Number, etc.)
         public List<string> ItemTypes => LabelItemTypes.AllTypes;
 
@@ -71,33 +70,29 @@ namespace win_app.Elements
         // Selection change handlers
         private void FixedItemsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = FixedItemsGrid.SelectedItem as LabelItem;
-            IsFixedStyleVisible = selected != null;
-            LoadPropertiesForSelectedItem(selected);
+            SelectedFixedItem = FixedItemsGrid.SelectedItem as LabelItem;
+            IsFixedStyleVisible = SelectedFixedItem != null;
+
+            LoadPropertiesForSelectedItem(SelectedFixedItem);
         }
-
-        private void LoadPropertiesForSelectedItem(LabelItem item)
-        {
-            SelectedItemProperties.Clear();
-
-            if (item == null || string.IsNullOrEmpty(item.Type)) return;
-
-            if (LabelItemTypes.TypeProperties.TryGetValue(item.Type, out var props))
-            {
-                foreach (var prop in props)
-                {
-                    SelectedItemProperties.Add(new LabelPropertyViewModel(prop));
-                }
-            }
-
-            OnPropertyChanged(nameof(SelectedItemProperties));
-        }
-
-
 
         private void VariableItemsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            IsVariableStyleVisible = VariableItemsGrid.SelectedItem != null;
+            SelectedVariableItem = VariableItemsGrid.SelectedItem as LabelItem;
+            IsVariableStyleVisible = SelectedVariableItem != null;
+            LoadPropertiesForSelectedItem(SelectedVariableItem);
+        }
+
+        private void LoadPropertiesForSelectedItem(LabelItem? item)
+        {
+            SelectedItemProperties.Clear();
+
+            if (item == null) return;
+
+            foreach (var prop in item.PropertyDefinitions)
+            {
+                SelectedItemProperties.Add(new LabelPropertyViewModel(prop));
+            }
         }
 
         // Add/Remove buttons
@@ -145,6 +140,30 @@ namespace win_app.Elements
                 {
                     propertyViewModel.SelectedValue = dialog.FileName;
                 }
+            }
+        }
+
+        private LabelItem? _selectedFixedItem;
+        public LabelItem? SelectedFixedItem
+        {
+            get => _selectedFixedItem;
+            set
+            {
+                _selectedFixedItem = value;
+                OnPropertyChanged(nameof(SelectedFixedItem));
+                OnPropertyChanged(nameof(SelectedItemProperties));
+            }
+        }
+
+        private LabelItem? _selectedVariableItem;
+        public LabelItem? SelectedVariableItem
+        {
+            get => _selectedVariableItem;
+            set
+            {
+                _selectedVariableItem = value;
+                OnPropertyChanged(nameof(SelectedVariableItem));
+                OnPropertyChanged(nameof(SelectedItemProperties));
             }
         }
 

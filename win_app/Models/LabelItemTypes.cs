@@ -24,14 +24,16 @@ namespace win_app.Models
                 "Text", new List<LabelItemProperty>
                 {
                     new LabelItemProperty("Font", PropertyType.InputDropdown,
-                        Fonts.SystemFontFamilies.Select(f => f.Source).ToList()),
+                        Fonts.SystemFontFamilies.Select(f => f.Source).ToList(),
+                        defaultValue: "Arial"),
 
                     new LabelItemProperty("FontSize", PropertyType.InputDropdown,
-                        new List<string> { "8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "28", "32", "36", "48", "72" }),
+                        new List<string> { "8", "9", "10", "11", "12", "14", "16", "18", "20", "24", "28", "32", "36", "48", "72" },
+                        defaultValue: "12"),
 
                     new LabelItemProperty("Alignment", new List<IconOption>
                     {
-                        new IconOption { Key = "Left", Icon = "/Assets/icons/icons8-align-left-50.png" },
+                        new IconOption { Key = "Left", Icon = "/Assets/icons/icons8-align-left-50.png", IsSelected = true },
                         new IconOption { Key = "Center", Icon = "/Assets/icons/icons8-align-center-50.png" },
                         new IconOption { Key = "Right", Icon = "/Assets/icons/icons8-align-right-50.png" },
                         new IconOption { Key = "Justify", Icon = "/Assets/icons/icons8-align-justify-50.png" }
@@ -117,16 +119,33 @@ namespace win_app.Models
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 
-    public class LabelItemProperty
+    public class LabelItemProperty : INotifyPropertyChanged
     {
         public string Name { get; set; }
         public PropertyType Type { get; set; }
 
-        public List<string>? Options { get; set; }               // For dropdowns/input dropdowns
-        public List<IconOption>? IconOptions { get; set; }       // For icon selections
-        public IconSelectionMode? SelectionMode { get; set; }    // Only used for IconSelection
+        public List<string>? Options { get; set; }
+        public List<IconOption>? IconOptions { get; set; }
+        public IconSelectionMode? SelectionMode { get; set; }
 
-        // For icon selection
+        public string? SelectedValue { get; set; } // For dropdown/text/file input values
+        public string? DefaultValue { get; set; }  // Optional default value
+
+        public LabelItemProperty(string name, PropertyType type, List<string> options, string? defaultValue = null)
+        {
+            Name = name;
+            Type = type;
+            Options = options;
+            DefaultValue = defaultValue;
+            SelectedValue = defaultValue;
+        }
+
+        public LabelItemProperty(string name, PropertyType type)
+        {
+            Name = name;
+            Type = type;
+        }
+
         public LabelItemProperty(string name, List<IconOption> icons, IconSelectionMode selectionMode)
         {
             Name = name;
@@ -134,28 +153,10 @@ namespace win_app.Models
             IconOptions = icons;
             SelectionMode = selectionMode;
 
-            // ✅ Hook up selection callback for each icon
             foreach (var icon in icons)
             {
                 icon.OnSelectedChanged = HandleIconSelected;
             }
-        }
-
-
-        // For dropdown/input dropdown
-        public LabelItemProperty(string name, PropertyType type, List<string> options)
-        {
-            Name = name;
-            Type = type;
-            Options = options;
-        }
-
-        // Basic constructor (needed for FilePath, TextInput, etc.)
-
-        public LabelItemProperty(string name, PropertyType type)
-        {
-            Name = name;
-            Type = type;
         }
 
         private void HandleIconSelected(IconOption selectedIcon)
@@ -169,6 +170,38 @@ namespace win_app.Models
                 }
             }
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+
+        public LabelItemProperty Clone()
+        {
+            var clone = new LabelItemProperty(Name, Type)
+            {
+                Options = Options?.ToList(),
+                IconOptions = IconOptions?.Select(icon => new IconOption
+                {
+                    Key = icon.Key,
+                    Icon = icon.Icon,
+                    IsSelected = icon.IsSelected
+                }).ToList(),
+                SelectionMode = SelectionMode,
+                DefaultValue = DefaultValue,
+                SelectedValue = DefaultValue // 👈 THIS IS CRITICAL
+            };
+
+            // Re-hook icon selection logic
+            if (clone.IconOptions != null && clone.SelectionMode != null)
+            {
+                foreach (var icon in clone.IconOptions)
+                {
+                    icon.OnSelectedChanged = clone.HandleIconSelected;
+                }
+            }
+
+            return clone;
+        }
+
 
     }
 

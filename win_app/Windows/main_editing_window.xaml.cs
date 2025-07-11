@@ -382,6 +382,11 @@ namespace win_app.Windows
 
         }
 
+        private void RightPaneLabelItems_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Event handler logic
+        }
+
 
     }
 }

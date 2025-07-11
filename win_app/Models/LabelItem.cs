@@ -9,38 +9,38 @@ namespace win_app.Models
 {
     public class LabelItem : INotifyPropertyChanged
     {
-        public string Name { get; set; }   
+        public string Name { get; set; }
 
         private string _type;
-        public string Type  
+        public string Type
         {
             get => _type;
             set
             {
-                _type = value;  
+                _type = value;
                 OnPropertyChanged(nameof(Type));
                 LoadDefaultPropertiesForType(value);
             }
         }
 
-        public Dictionary<string, object> Properties { get; set; } = new();
+        // Store full property objects instead of raw values
+        public List<LabelItemProperty> PropertyDefinitions { get; set; } = new();
 
         private void LoadDefaultPropertiesForType(string type)
         {
-            Properties.Clear();
+            PropertyDefinitions.Clear();
             if (LabelItemTypes.TypeProperties.TryGetValue(type, out var props))
             {
-                foreach (var prop in props)
-                {
-                    Properties[prop.Name] = null;
-                }
+                PropertyDefinitions = props.Select(p => p.Clone()).ToList();
             }
-            OnPropertyChanged(nameof(Properties));
+
+            OnPropertyChanged(nameof(PropertyDefinitions));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
+
 
 }

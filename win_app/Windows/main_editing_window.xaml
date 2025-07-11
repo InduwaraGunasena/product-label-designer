@@ -319,11 +319,8 @@
                           Background="Gray"/>
 
             <!-- Right side label key, value settings pane -->
-            <Border Grid.Column="3" Background="#E7EAEE">
+            <elements:RightPaneLabelItems Grid.Column="3" Background="#E7EAEE" Loaded="RightPaneLabelItems_Loaded"/>
 
-                <elements:RightPaneLabelItems />
-
-            </Border>
         </Grid>
 
 

@@ -20,27 +20,76 @@
             <ComboBox HorizontalAlignment="Stretch"
               MinWidth="100"
               IsEditable="True"
-              ItemsSource="{Binding Options}"
-              SelectedItem="{Binding SelectedValue}" />
+              ItemsSource="{Binding Options}"  
+              SelectedItem="{Binding SelectedValue, Mode=TwoWay}">
+                <ComboBox.Style>
+                    <Style TargetType="ComboBox">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Name}" Value="Font">
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <Border MaxWidth="200" Padding="2">
+                                                <TextBlock Text="{Binding}" 
+                                                           FontFamily="{Binding}" 
+                                                           FontSize="14"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Style>
+            </ComboBox>
         </DataTemplate>
+
 
         <!-- Set of icon selection templates (input is selections of a series of icon buttons) -->
         <DataTemplate x:Key="IconSelectionTemplate">
             <ItemsControl ItemsSource="{Binding IconOptions}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
+                        <StackPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Margin" Value="0,0,8,0"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ToggleButton Margin="2"
-                              Width="18"
-                              Height="18"
-                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                              >
-                            <Image Source="{Binding Icon}" Stretch="Uniform"/>
-                        </ToggleButton>
+                        <Grid>
+                            <Border x:Name="HighlightBorder"
+                                    Width="20"
+                                    Height="20"
+                                    CornerRadius="2"
+                                    BorderBrush="Transparent"
+                                    Visibility="Collapsed"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>
+                            <Image Source="{Binding Icon}" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <ToggleButton Margin="0"
+                                          Width="20"
+                                          Height="20"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                          Focusable="False"
+                                          Opacity="0"
+                                          />
+                        </Grid>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="HighlightBorder" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="HighlightBorder" Property="Background" Value="LightBlue"/>
+                                <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="Black"/>
+                                <Setter TargetName="HighlightBorder" Property="BorderThickness" Value="1"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -172,7 +221,11 @@
                             </Grid.RowDefinitions>
 
                             <!-- Properties Title -->
-                            <TextBlock Text="Properties" Grid.Row="0" FontWeight="Bold" Margin="0 0 0 8"/>
+                            <TextBlock Grid.Row="0" FontWeight="Bold" Margin="0 0 0 8">
+                                <Run Text="Properties"/>
+                                <Run Text=" : "/>
+                                <Run Text="{Binding SelectedFixedItem.Name}" />
+                            </TextBlock>
 
                             <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
                                     <ItemsControl ItemsSource="{Binding SelectedItemProperties}">
@@ -257,7 +310,7 @@
                     <Border Grid.Row="3"
                             Background="#F0F0F0"
                             Padding="10"
-                            Visibility="{Binding IsFixedStyleVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{Binding IsVariableStyleVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -267,7 +320,11 @@
                             </Grid.RowDefinitions>
 
                             <!-- Properties Title -->
-                            <TextBlock Text="Properties" Grid.Row="0" FontWeight="Bold" Margin="0 0 0 8"/>
+                            <TextBlock Grid.Row="0" FontWeight="Bold" Margin="0 0 0 8">
+                                <Run Text="Properties"/>
+                                <Run Text=" : "/>
+                                <Run Text="{Binding SelectedVariableItem.Name}" />
+                            </TextBlock>
 
                             <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
                                 <ItemsControl ItemsSource="{Binding SelectedItemProperties}">

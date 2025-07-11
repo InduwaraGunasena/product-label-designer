@@ -37,6 +37,9 @@ namespace win_app.Models
             Options = property.Options != null ? new ObservableCollection<string>(property.Options) : new ObservableCollection<string>();
             IconOptions = property.IconOptions != null ? new ObservableCollection<IconOption>(property.IconOptions) : new ObservableCollection<IconOption>();
             SelectionMode = property.SelectionMode;
+
+            // Set SelectedValue from the model's SelectedValue (which is set to DefaultValue in your model)
+            SelectedValue = property.SelectedValue ?? property.DefaultValue ?? string.Empty;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
