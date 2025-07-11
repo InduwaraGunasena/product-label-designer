@@ -15,7 +15,7 @@
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
         <!-- UI Templates -->
-        <!-- Dropdown input templates (input is a selection of a series of options) -->
+        <!-- Dropdown input templates (input is a selection of a series of options + text input) -->
         <DataTemplate x:Key="InputDropdownTemplate">
             <ComboBox HorizontalAlignment="Stretch"
               MinWidth="100"
@@ -46,6 +46,11 @@
             </ComboBox>
         </DataTemplate>
 
+        <!-- Dropdown templates (input is a selection of a series of options) -->
+        <DataTemplate x:Key="DropdownTemplate">
+            <ComboBox ItemsSource="{Binding Options}" 
+                      SelectedItem="{Binding SelectedValue, Mode=TwoWay}" />
+        </DataTemplate>
 
         <!-- Set of icon selection templates (input is selections of a series of icon buttons) -->
         <DataTemplate x:Key="IconSelectionTemplate">
@@ -77,6 +82,7 @@
                                           Height="20"
                                           Background="Transparent"
                                           BorderThickness="0"
+                                          Command="{Binding OnClickCommand}"
                                           IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                           Focusable="False"
                                           Opacity="0"
@@ -135,6 +141,7 @@
         <!-- Template Selector -->
         <sel:PropertyTemplateSelector x:Key="PropertySelector"
         InputDropdownTemplate="{StaticResource InputDropdownTemplate}"
+        DropdownTemplate="{StaticResource DropdownTemplate}"
         IconSelectionTemplate="{StaticResource IconSelectionTemplate}"
         TextInputTemplate="{StaticResource TextInputTemplate}"
         FilePathTemplate="{StaticResource FilePathTemplate}" />

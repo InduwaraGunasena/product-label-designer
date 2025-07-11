@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using win_app.Models;
+using win_app.Formatters;
 
 namespace win_app.Selectors
 {
@@ -10,6 +10,8 @@ namespace win_app.Selectors
         public DataTemplate IconSelectionTemplate { get; set; }
         public DataTemplate TextInputTemplate { get; set; }
         public DataTemplate FilePathTemplate { get; set; }
+        public DataTemplate DropdownTemplate { get; set; }
+
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -18,6 +20,7 @@ namespace win_app.Selectors
                 return prop.Type switch
                 {
                     PropertyType.InputDropdown => InputDropdownTemplate,
+                    PropertyType.Dropdown => DropdownTemplate,
                     PropertyType.IconSelection => IconSelectionTemplate,
                     PropertyType.TextInput => TextInputTemplate,
                     PropertyType.FilePath => FilePathTemplate,

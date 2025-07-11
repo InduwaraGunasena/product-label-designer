@@ -5,7 +5,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using win_app.Models;
+using win_app.Label;
+using win_app.Formatters;
 using win_app.Services;
 
 namespace win_app.Elements
@@ -44,9 +45,8 @@ namespace win_app.Elements
 
         public ObservableCollection<LabelPropertyViewModel> SelectedItemProperties { get; set; } = new();
 
-
         // List of types (Text, Number, etc.)
-        public List<string> ItemTypes => LabelItemTypes.AllTypes;
+        public List<string> ItemTypes => LabelItemFormatterRegistry.GetAllTypes();
 
         // Constructor
         public RightPaneLabelItems()
@@ -61,7 +61,7 @@ namespace win_app.Elements
             }));
 
             // Set ItemsSource in code
-            var itemTypes = win_app.Models.LabelItemTypes.AllTypes;
+            var itemTypes = LabelItemFormatterRegistry.GetAllTypes();
 
             ((DataGridComboBoxColumn)FixedItemsGrid.Columns[1]).ItemsSource = itemTypes;
             ((DataGridComboBoxColumn)VariableItemsGrid.Columns[1]).ItemsSource = itemTypes;
@@ -90,10 +90,13 @@ namespace win_app.Elements
 
             if (item == null) return;
 
-            foreach (var prop in item.PropertyDefinitions)
-            {
+            // First time: populate with defaults
+            if (item.Formats == null || item.Formats.Count == 0)
+                item.Formats = LabelItemFormatterRegistry.GetPropertyDefinitions(item.Type);
+
+            foreach (var prop in item.Formats)
                 SelectedItemProperties.Add(new LabelPropertyViewModel(prop));
-            }
+
         }
         // create the number for getting a unique name.
         private string GetUniqueName(string baseName, ObservableCollection<LabelItem> items)
@@ -194,8 +197,11 @@ namespace win_app.Elements
         {
             var design = new LabelDesign
             {
-                FixedItems = FixedItems.ToList(),
-                VariableItems = VariableItems.ToList()
+                Items = new LabelItems
+                {
+                    Fixed = FixedItems.Select(item => { item.Category = "Fixed"; return item; }).ToList(),
+                    Variable = VariableItems.Select(item => { item.Category = "Variable"; return item; }).ToList()
+                }
             };
 
             var dialog = new SaveFileDialog
@@ -227,9 +233,10 @@ namespace win_app.Elements
                     FixedItems.Clear();
                     VariableItems.Clear();
 
-                    foreach (var item in loaded.FixedItems)
+                    foreach (var item in loaded.Items.Fixed)
                         FixedItems.Add(item);
-                    foreach (var item in loaded.VariableItems)
+
+                    foreach (var item in loaded.Items.Variable)
                         VariableItems.Add(item);
 
                     MessageBox.Show("Design loaded successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

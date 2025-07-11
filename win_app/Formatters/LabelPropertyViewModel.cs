@@ -5,9 +5,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using win_app.Models;
+using win_app.Formatters;
 
-namespace win_app.Models
+namespace win_app.Formatters
 {
     public class LabelPropertyViewModel : INotifyPropertyChanged
     {
@@ -24,23 +24,28 @@ namespace win_app.Models
             get => _selectedValue;
             set
             {
-                _selectedValue = value;
-                OnPropertyChanged(nameof(SelectedValue));
+                if (_selectedValue != value)
+                {
+                    _selectedValue = value;
+                    PropertyModel.SelectedValue = value; // 🟡 persist to model
+                    OnPropertyChanged(nameof(SelectedValue));
+                }
             }
         }
 
+        public LabelItemProperty PropertyModel { get; set; }
+
         public LabelPropertyViewModel(LabelItemProperty property)
         {
+            PropertyModel = property;
             Name = property.Name;
             Type = property.Type;
-
-            Options = property.Options != null ? new ObservableCollection<string>(property.Options) : new ObservableCollection<string>();
-            IconOptions = property.IconOptions != null ? new ObservableCollection<IconOption>(property.IconOptions) : new ObservableCollection<IconOption>();
+            Options = new ObservableCollection<string>(property.Options ?? new());
+            IconOptions = property.IconOptions != null ? new ObservableCollection<IconOption>(property.IconOptions) : new();
             SelectionMode = property.SelectionMode;
-
-            // Set SelectedValue from the model's SelectedValue (which is set to DefaultValue in your model)
-            SelectedValue = property.SelectedValue ?? property.DefaultValue ?? string.Empty;
+            SelectedValue = property.SelectedValue ?? property.DefaultValue ?? "";
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propName)

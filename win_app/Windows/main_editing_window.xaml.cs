@@ -15,6 +15,7 @@ using Microsoft.Win32;
 
 
 using win_app.Elements;
+using win_app.Label;
 using win_app.Models;
 using win_app.Services;
 using Xceed.Wpf.Toolkit;
@@ -443,8 +444,8 @@ namespace win_app.Windows
                 if (design != null)
                 {
                     _currentLabelDesign = design;
-                    RightPaneLabelItems.FixedItems = new ObservableCollection<LabelItem>(design.FixedItems);
-                    RightPaneLabelItems.VariableItems = new ObservableCollection<LabelItem>(design.VariableItems);
+                    RightPaneLabelItems.FixedItems = new ObservableCollection<LabelItem>(design.Items.Fixed);
+                    RightPaneLabelItems.VariableItems = new ObservableCollection<LabelItem>(design.Items.Variable);
                     OpenFilePathText.Text = dlg.FileName;
                 }
             }
@@ -471,8 +472,8 @@ namespace win_app.Windows
         {
             if (RightPaneLabelItems != null && _currentLabelDesign != null)
             {
-                _currentLabelDesign.FixedItems = new List<LabelItem>(RightPaneLabelItems.FixedItems);
-                _currentLabelDesign.VariableItems = new List<LabelItem>(RightPaneLabelItems.VariableItems);
+                _currentLabelDesign.Items.Fixed = new List<LabelItem>(RightPaneLabelItems.FixedItems);
+                _currentLabelDesign.Items.Variable = new List<LabelItem>(RightPaneLabelItems.VariableItems);
             }
         }
 
