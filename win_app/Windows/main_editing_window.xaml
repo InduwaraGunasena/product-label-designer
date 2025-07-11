@@ -4,6 +4,7 @@
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                      xmlns:local="clr-namespace:win_app.Windows"
+                     xmlns:conv="clr-namespace:win_app.Converters"
                      xmlns:elements="clr-namespace:win_app.Elements"
                      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
                      mc:Ignorable="d"
@@ -12,6 +13,14 @@
                      WindowState="Maximized"
                      TitleBackground="#0078D7"
                      TitleForeground="White">
+
+    <fluent:RibbonWindow.Resources>
+        <!-- Converters -->
+        <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+
+    </fluent:RibbonWindow.Resources>
+    
+    
 
     <Grid>
         <Grid.RowDefinitions>
@@ -27,6 +36,384 @@
                 <fluent:Backstage>
                     <fluent:BackstageTabControl>
                         <fluent:BackstageTabItem Header="New" />
+
+                        <!--Open a file section-->
+                        <fluent:BackstageTabItem Header="Open">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <Grid Margin="40 20 20 20">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Heading Row -->
+                                    <TextBlock Text="Open a Label Design File" Grid.Row="0"
+                                               FontWeight="Bold" FontSize="20" Margin="0 10 0 30"/>
+
+                                    <!-- Options and Content Row -->
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300"/>
+                                            <ColumnDefinition Width="1"/>
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+
+                                        <!-- Left Options -->
+                                        <ListBox x:Name="OpenOptionsListBoxForOpen"
+                                                 Grid.Column="0"
+                                                 SelectedIndex="0"
+                                                 Margin="0,10,10,0"
+                                                 BorderThickness="0"
+                                                 Background="Transparent">
+                                            <ListBox.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Margin" Value="0,0,0,8"/>
+                                                    <Setter Property="Padding" Value="8,4"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                                <Border x:Name="Bd"
+                                                                        Background="Transparent"
+                                                                        CornerRadius="0"
+                                                                        BorderBrush="Transparent"
+                                                                        BorderThickness="0"
+                                                                        SnapsToDevicePixels="True"
+                                                                        Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsSelected" Value="True">
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="#0078D7"/>
+                                                                        <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+                                                                        <Setter TargetName="Bd" Property="CornerRadius" Value="5"/>
+                                                                        <Setter TargetName="Bd" Property="Background" Value="#E3F1FB"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsSelected" Value="False">
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
+                                                                        <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                                                                        <Setter TargetName="Bd" Property="CornerRadius" Value="0"/>
+                                                                        <Setter TargetName="Bd" Property="Background" Value="Transparent"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.ItemContainerStyle>
+                                            <ListBoxItem>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="/Assets/icons/icons8-workstation-40.png" Width="40" Height="40" Margin="0,0,20,0"/>
+                                                    <TextBlock Text="This PC" VerticalAlignment="Center" FontSize="16"/>
+                                                </StackPanel>
+                                            </ListBoxItem>
+                                       
+                                            <ListBoxItem>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="/Assets/icons/icons8-cloud-40.png" Width="40" Height="40" Margin="0,0,20,0"/>
+                                                    <TextBlock Text="Add a Place" VerticalAlignment="Center" FontSize="16"/>
+                                                </StackPanel>
+                                            </ListBoxItem>
+                                        </ListBox>
+                                    
+                                    
+                                        <!-- Seperator line -->
+                                        <Border Grid.Column="1" Background="#CCC" Width="1" Margin="0,10,0,0"/>
+
+                                        <!-- Right Content -->
+                                        <Grid Grid.Column="2" Margin="10,10,0,0">
+                                            <Grid x:Name="ThisPCPanel" Visibility="{Binding ElementName=OpenOptionsListBoxForOpen, Path=SelectedIndex, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=0}">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                
+                                                <!-- header -->
+                                                <TextBlock Grid.Row="0" Text="Open a File" FontWeight="DemiBold" Margin="0,0,0,20" FontSize="18" Foreground="DodgerBlue"/>
+
+                                                <!-- text box (left) and Browse button (right) -->
+                                                <Grid Grid.Row="1" Margin="0,0,0,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- Text Box -->
+                                                    <TextBox x:Name="OpenFilePathText"
+                                                             Grid.Column="0"
+                                                             Height="30"
+                                                             HorizontalAlignment="Stretch"
+                                                             VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             Margin="0,0,10,0"
+                                                             MinWidth="0"
+                                                             Padding="8 0"
+                                                             Width="Auto"
+                                                             Text="Select a file to open" />
+                                                    <!-- Browse Button -->
+                                                    <Button Grid.Column="1" Content="Browse" Width="100" Height="30" VerticalAlignment="Center"  Click="OpenFileButton_Click"/>
+                                                </Grid>
+                                                
+                                                <!-- Recent Locations -->
+                                                <StackPanel Grid.Row="2">
+                                                    <TextBlock Text="Recent Locations:" FontWeight="DemiBold" Margin="0,30,0,20" FontSize="18" Foreground="Black"/>
+                                                    <TextBlock Text="-- Future Update --" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="12" Foreground="Black"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            <StackPanel x:Name="AddPlacePanel"
+                                                        Visibility="{Binding ElementName=OpenOptionsListBoxForOpen, Path=SelectedIndex, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=1}">
+                                                <TextBlock Text="Add a Place" FontWeight="DemiBold" Margin="0,0,0,5" FontSize="18" Foreground="DodgerBlue"/>
+                                                <TextBlock Text="You can add locations to make it easier to save Office documents to the cloud."
+                                                           Margin="0,0,0,30" FontSize="13" Foreground="Black"/>
+                                                <StackPanel HorizontalAlignment="Left" Width="700">
+                                                    <Button Height="Auto"
+                                                        Click="OneDrive_Click"
+                                                        Background="Transparent"
+                                                        HorizontalContentAlignment="Left"
+                                                        BorderThickness="0"
+                                                        Padding="10">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Image Source="/Assets/icons/icons8-microsoft-onedrive-2019-48.png"
+                                                               Width="40" Stretch="Uniform" Margin="0,0,10,0"/>
+                                                            <TextBlock Text="OneDrive" FontSize="16" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+                                                
+                                                    <Border Height="1" Background="#CCC" Margin="0,0"/>
+
+                                                    <Button Height="auto"
+                                                        Click="Dropbox_Click" 
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        HorizontalContentAlignment="Left"
+                                                        Padding="10">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Image Source="/Assets/icons/icons8-dropbox-48.png" 
+                                                               Width="40" Margin="0,0,20,0" 
+                                                               Stretch="Uniform" />
+                                                            <TextBlock Text="Dropbox" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                        </StackPanel>
+                                                    </Button>
+
+                                                    <Border Height="1" Background="#CCC" Margin="0,0"/>
+
+                                                    <Button Height="auto"
+                                                        Click="GoogleDrive_Click" 
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        HorizontalContentAlignment="Left"
+                                                        Padding="10">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Image Source="/Assets/icons/icons8-google-drive-48.png" 
+                                                               Width="40" Margin="0,0,20,0" 
+                                                               Stretch="Uniform" />
+                                                            <TextBlock Text="Google Drive" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                        </StackPanel>
+                                                    </Button>
+
+                                                    <Border Height="1" Background="#CCC" Margin="0,0"/>
+
+                                                </StackPanel>
+
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </ScrollViewer>
+                        </fluent:BackstageTabItem>
+                        
+                        
+                        <!-- For Save as tab -->
+                        <fluent:BackstageTabItem Header="Save As">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <Grid Margin="40 20 20 20">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Heading Row -->
+                                    <TextBlock Text="Save As a Label Design" Grid.Row="0"
+                                                FontWeight="Bold" FontSize="20" Margin="0 10 0 30"/>
+
+                                    <!-- Options and Content Row -->
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300"/>
+                                            <ColumnDefinition Width="1"/>
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+
+                                        <!-- Left Options -->
+                                        <ListBox x:Name="OpenOptionsListBoxForSaveAs"
+                                                 Grid.Column="0"
+                                                 SelectedIndex="0"
+                                                 Margin="0,10,10,0"
+                                                 BorderThickness="0"
+                                                 Background="Transparent">
+                                            <ListBox.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Margin" Value="0,0,0,8"/>
+                                                    <Setter Property="Padding" Value="8,4"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                                <Border x:Name="Bd"
+                                                                        Background="Transparent"
+                                                                        CornerRadius="0"
+                                                                        BorderBrush="Transparent"
+                                                                        BorderThickness="0"
+                                                                        SnapsToDevicePixels="True"
+                                                                        Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsSelected" Value="True">
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="#0078D7"/>
+                                                                        <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+                                                                        <Setter TargetName="Bd" Property="CornerRadius" Value="5"/>
+                                                                        <Setter TargetName="Bd" Property="Background" Value="#E3F1FB"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsSelected" Value="False">
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
+                                                                        <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                                                                        <Setter TargetName="Bd" Property="CornerRadius" Value="0"/>
+                                                                        <Setter TargetName="Bd" Property="Background" Value="Transparent"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.ItemContainerStyle>
+                                            <ListBoxItem>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="/Assets/icons/icons8-workstation-40.png" Width="40" Height="40" Margin="0,0,20,0"/>
+                                                    <TextBlock Text="This PC" VerticalAlignment="Center" FontSize="16"/>
+                                                </StackPanel>
+                                            </ListBoxItem>
+
+                                            <ListBoxItem>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="/Assets/icons/icons8-cloud-40.png" Width="40" Height="40" Margin="0,0,20,0"/>
+                                                    <TextBlock Text="Add a Place" VerticalAlignment="Center" FontSize="16"/>
+                                                </StackPanel>
+                                            </ListBoxItem>
+                                        </ListBox>
+
+
+                                        <!-- Seperator line -->
+                                        <Border Grid.Column="1" Background="#CCC" Width="1" Margin="0,10,0,0"/>
+
+                                        <!-- Right Content -->
+                                        <Grid Grid.Column="2" Margin="10,10,0,0">
+                                            <Grid x:Name="ThisPCPanelForSaveAs" Visibility="{Binding ElementName=OpenOptionsListBoxForSaveAs, Path=SelectedIndex, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=0}">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- header -->
+                                                <TextBlock Grid.Row="0" Text="Save As" FontWeight="DemiBold" Margin="0,0,0,20" FontSize="18" Foreground="DodgerBlue"/>
+
+                                                <!-- text box (left) and Browse button (right) -->
+                                                <Grid Grid.Row="1" Margin="0,0,0,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- Text Box -->
+                                                    <TextBox x:Name="SaveFilePathText"
+                                                             Grid.Column="0"
+                                                             Height="30"
+                                                             HorizontalAlignment="Stretch"
+                                                             VerticalAlignment="Center"
+                                                             VerticalContentAlignment="Center"
+                                                             Margin="0,0,10,0"
+                                                             MinWidth="0"
+                                                             Padding="8 0"
+                                                             Width="Auto"
+                                                             Text="Select the path to save" />
+                                                    <!-- Browse Button -->
+                                                    <Button Grid.Column="1" Content="Browse" Width="100" Height="30" VerticalAlignment="Center" Click="SaveFileButton_Click"/>
+                                                </Grid>
+
+                                                <!-- Recent Locations -->
+                                                <StackPanel Grid.Row="2">
+                                                    <TextBlock Text="Recent Locations:" FontWeight="DemiBold" Margin="0,30,0,20" FontSize="18" Foreground="Black"/>
+                                                    <TextBlock Text="-- Future Update --" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="12" Foreground="Black"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            
+                                            <StackPanel x:Name="AddPlacePanelForSaveAs"
+                                                        Visibility="{Binding ElementName=OpenOptionsListBoxForSaveAs, Path=SelectedIndex, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=1}">
+                                                <TextBlock Text="Add a Place" FontWeight="DemiBold" Margin="0,0,0,5" FontSize="18" Foreground="DodgerBlue"/>
+                                                <TextBlock Text="You can add locations to make it easier to save Office documents to the cloud."
+                                                           Margin="0,0,0,30" FontSize="13" Foreground="Black"/>
+                                                <StackPanel HorizontalAlignment="Left" Width="700">
+                                                    <Button Height="Auto"
+                                                            Click="OneDrive_Click"
+                                                            Background="Transparent"
+                                                            HorizontalContentAlignment="Left"
+                                                            BorderThickness="0"
+                                                            Padding="10">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Image Source="/Assets/icons/icons8-microsoft-onedrive-2019-48.png"
+                                                                   Width="40" Stretch="Uniform" Margin="0,0,10,0"/>
+                                                            <TextBlock Text="OneDrive" FontSize="16" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </Button>
+
+                                                    <Border Height="1" Background="#CCC" Margin="0,0"/>
+
+                                                    <Button Height="auto"
+                                                            Click="Dropbox_Click" 
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            HorizontalContentAlignment="Left"
+                                                            Padding="10">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Image Source="/Assets/icons/icons8-dropbox-48.png" 
+                                                                   Width="40" Margin="0,0,20,0" 
+                                                                   Stretch="Uniform" />
+                                                            <TextBlock Text="Dropbox" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                        </StackPanel>
+                                                    </Button>
+
+                                                    <Border Height="1" Background="#CCC" Margin="0,0"/>
+
+                                                    <Button Height="auto"
+                                                            Click="GoogleDrive_Click" 
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            HorizontalContentAlignment="Left"
+                                                            Padding="10">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Image Source="/Assets/icons/icons8-google-drive-48.png" 
+                                                                   Width="40" Margin="0,0,20,0" 
+                                                                   Stretch="Uniform" />
+                                                            <TextBlock Text="Google Drive" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                        </StackPanel>
+                                                    </Button>
+
+                                                    <Border Height="1" Background="#CCC" Margin="0,0"/>
+
+                                                </StackPanel>
+
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </ScrollViewer>
+                        </fluent:BackstageTabItem>
+                        
+                        
+                        
+                        
                         <fluent:BackstageTabItem Header="Print" />
                         <fluent:Button Header="Blue" />
                     </fluent:BackstageTabControl>
@@ -191,7 +578,7 @@
                 <ColumnDefinition x:Name="LeftPaneColumn" Width="180" MinWidth="180" MaxWidth="180"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="3" />
-                <ColumnDefinition Width="Auto" MinWidth="150" MaxWidth="600"/>
+                <ColumnDefinition Width="Auto" MinWidth="260" MaxWidth="500"/>
             </Grid.ColumnDefinitions>
 
             <!-- Left side tool pane -->
@@ -319,25 +706,7 @@
                           Background="Gray"/>
 
             <!-- Right side label key, value settings pane -->
-            <Border Grid.Column="3" Background="#E7EAEE">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Background="#0078D7">
-                        <TextBlock Text="Label settings" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </Border>
-
-                    <Grid  Grid.Row="1">
-                        <DataGrid x:Name="DataGridLabelData" 
-                              AutoGenerateColumns="True"
-                              Margin="2"/>
-                    </Grid>
-                </Grid>
-
-            </Border>
+            <elements:RightPaneLabelItems x:Name="RightPaneLabelItems" Grid.Column="3" Background="#E7EAEE" Loaded="RightPaneLabelItems_Loaded"/>
 
         </Grid>
 
@@ -389,14 +758,16 @@
 
                     <!-- Zoom Slider -->
                     <Slider x:Name="ZoomSlider"
-                        Width="120"
-                        Minimum="40"
-                        Maximum="400"
-                        Value="100"
-                        TickFrequency="10"
-                        IsSnapToTickEnabled="True"
-                        ValueChanged="ZoomSlider_ValueChanged"
-                        Margin="5,0,5,0" />
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Width="120"
+                            Minimum="40"
+                            Maximum="400"
+                            Value="100"
+                            TickFrequency="10"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="ZoomSlider_ValueChanged"
+                            Margin="5,0,5,0" />
 
                     <!-- Zoom Percentage -->
                     <TextBlock x:Name="ZoomPercentageText" VerticalAlignment="Center" Text="100%" />
